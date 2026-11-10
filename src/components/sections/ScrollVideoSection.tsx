@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { VideoPlaceholder } from './VideoPlaceholder';
+import { getAssetUrl } from '../../lib/assets';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,10 +16,10 @@ export interface ScrollVideoSectionProps {
 }
 
 export const DEFAULT_POPRIO_TRAILER_SRC =
-  '/assets/videos/POPRIO-The-Art-of-The-Pop-15s-Trailer-1920x1080.mp4';
+  getAssetUrl('/assets/videos/POPRIO-The-Art-of-The-Pop-15s-Trailer-1920x1080.mp4');
 
 export const DEFAULT_POPRIO_TRAILER_MOBILE_SRC =
-  '/assets/videos/POPRIO-The-Art-of-The-Pop-15s-Trailer-1080x1920-Mobile.mp4';
+  getAssetUrl('/assets/videos/POPRIO-The-Art-of-The-Pop-15s-Trailer-1080x1920-Mobile.mp4');
 
 export const ScrollVideoSection: React.FC<ScrollVideoSectionProps> = ({
   videoSrc = DEFAULT_POPRIO_TRAILER_SRC,

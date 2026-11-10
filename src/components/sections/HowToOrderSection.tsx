@@ -6,12 +6,13 @@ import {
   WHATSAPP_NUMBER,
 } from '../../config/site';
 import { OrderingStep, OrderingStepData } from './OrderingStep';
+import { getAssetUrl } from '../../lib/assets';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const HOW_TO_ORDER_VIDEO_SRC = '/assets/videos/how-it-works.mp4';
+export const HOW_TO_ORDER_VIDEO_SRC = getAssetUrl('/assets/videos/how-it-works.mp4');
 export const HOW_TO_ORDER_MOBILE_VIDEO_SRC =
-  '/assets/videos/POPRIO-How-To-Order-10s-Loop-1080x1920-Mobile.mp4';
+  getAssetUrl('/assets/videos/POPRIO-How-To-Order-10s-Loop-1080x1920-Mobile.mp4');
 
 export const HOW_TO_ORDER_PREFILLED_MESSAGE =
   "Hi POPRIO! I'd like to place an order.";

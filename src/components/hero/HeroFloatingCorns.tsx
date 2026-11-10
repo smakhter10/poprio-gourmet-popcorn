@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { getAssetUrl } from '../../lib/assets';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -30,7 +31,7 @@ interface FloatingCornItem {
 const FLOATING_CORN_ITEMS: readonly FloatingCornItem[] = [
   {
     id: 'corn-left-closer',
-    src: '/assets/floating-corns/Caramel%20Drizzled%20Popcorn%20Cluster-2.png',
+    src: getAssetUrl('/assets/floating-corns/Caramel%20Drizzled%20Popcorn%20Cluster-2.png'),
     alt: '',
     side: 'left',
     depth: 'closer',
@@ -45,7 +46,7 @@ const FLOATING_CORN_ITEMS: readonly FloatingCornItem[] = [
   },
   {
     id: 'corn-left-farther',
-    src: '/assets/floating-corns/Gourmet%20Golden%20Popcorn%20Cluster.png',
+    src: getAssetUrl('/assets/floating-corns/Gourmet%20Golden%20Popcorn%20Cluster.png'),
     alt: '',
     side: 'left',
     depth: 'farther',
@@ -60,7 +61,7 @@ const FLOATING_CORN_ITEMS: readonly FloatingCornItem[] = [
   },
   {
     id: 'corn-right-closer',
-    src: '/assets/floating-corns/Chocolate%20Drizzled%20Cookie%20Popcorn%20Cluster-1.png',
+    src: getAssetUrl('/assets/floating-corns/Chocolate%20Drizzled%20Cookie%20Popcorn%20Cluster-1.png'),
     alt: '',
     side: 'right',
     depth: 'closer',
@@ -75,7 +76,7 @@ const FLOATING_CORN_ITEMS: readonly FloatingCornItem[] = [
   },
   {
     id: 'corn-right-farther',
-    src: '/assets/floating-corns/Chocolate-Drizzled%20Gourmet%20Popcorn%20Cluster.png',
+    src: getAssetUrl('/assets/floating-corns/Chocolate-Drizzled%20Gourmet%20Popcorn%20Cluster.png'),
     alt: '',
     side: 'right',
     depth: 'farther',

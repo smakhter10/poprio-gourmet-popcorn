@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build && node scripts/copy-build-to-theme.js",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "package:theme": "npm run build && node scripts/package-theme.js"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.0",

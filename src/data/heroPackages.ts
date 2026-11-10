@@ -1,3 +1,5 @@
+import { getAssetUrl } from '../lib/assets';
+
 export type HeroSlotId =
   | 'far-left'
   | 'inner-left'
@@ -31,31 +33,31 @@ export interface HeroSlotConfig {
 export const HERO_PACKAGES: readonly HeroPackageItem[] = [
   {
     id: 'pkg-caramel',
-    imagePath: '/assets/packages/package%201.png',
+    imagePath: getAssetUrl('/assets/packages/package%201.png'),
     flavourName: 'Caramel',
     altText: 'POPRIO Caramel Gourmet Popcorn pouch',
   },
   {
     id: 'pkg-cookies-cream',
-    imagePath: '/assets/packages/package%202.png',
+    imagePath: getAssetUrl('/assets/packages/package%202.png'),
     flavourName: 'Cookies & Cream',
     altText: 'POPRIO Cookies & Cream Gourmet Popcorn pouch',
   },
   {
     id: 'pkg-strawberry',
-    imagePath: '/assets/packages/package%203.png',
+    imagePath: getAssetUrl('/assets/packages/package%203.png'),
     flavourName: 'Strawberry',
     altText: 'POPRIO Strawberry Gourmet Popcorn pouch',
   },
   {
     id: 'pkg-nutella',
-    imagePath: '/assets/packages/package%204.png',
+    imagePath: getAssetUrl('/assets/packages/package%204.png'),
     flavourName: 'Nutella Choco Hazelnut',
     altText: 'POPRIO Nutella Choco Hazelnut Gourmet Popcorn pouch',
   },
   {
     id: 'pkg-snickers',
-    imagePath: '/assets/packages/package%205.png',
+    imagePath: getAssetUrl('/assets/packages/package%205.png'),
     flavourName: 'Snickers Inspired',
     altText: 'POPRIO Snickers Inspired Gourmet Popcorn pouch',
   },

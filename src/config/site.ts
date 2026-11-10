@@ -1,3 +1,5 @@
+import { getAssetUrl } from '../lib/assets';
+
 export interface NavItemConfig {
   id: 'home' | 'products' | 'about' | 'contact';
   label: 'HOME' | 'PRODUCTS' | 'ABOUT US' | 'CONTACT';
@@ -37,7 +39,7 @@ export const SITE_CONFIG = {
   name: 'POPRIO',
   domain: 'eatpoprio.com',
   logo: {
-    src: '/assets/brand/poprio-logo.webp',
+    src: getAssetUrl('/assets/brand/poprio-logo.webp'),
     alt: 'POPRIO Official Logo',
     width: 240,
     height: 89,

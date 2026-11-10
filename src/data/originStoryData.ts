@@ -1,4 +1,5 @@
 import { POPRIO_PRODUCTS } from './products';
+import { getAssetUrl } from '../lib/assets';
 
 export interface OriginStoryPackageCastItem {
   id: string;
@@ -37,39 +38,39 @@ export const ORIGIN_STORY_INTRO = {
 export const ORIGIN_STORY_ASSETS = {
   scene1: {
     boringPopcorn: {
-      src: '/assets/story/boring-popcorn.png',
+      src: getAssetUrl('/assets/story/boring-popcorn.png'),
       alt: 'Bored, unimpressed plain popcorn character',
     },
   },
   scene2: {
     mascotThinking: {
-      src: '/assets/story/mascot-thinking.png',
+      src: getAssetUrl('/assets/story/mascot-thinking.png'),
       alt: 'POPRIO mascot in a thinking pose pondering a bold new popcorn idea',
     },
     mascotEureka: {
-      src: '/assets/story/mascot-eureka.png',
+      src: getAssetUrl('/assets/story/mascot-eureka.png'),
       alt: 'POPRIO mascot in an excited Eureka discovery pose with a glowing lightbulb',
     },
   },
   scene3: {
     flavourExplosion: {
-      src: '/assets/story/flavour-explosion.png',
+      src: getAssetUrl('/assets/story/flavour-explosion.png'),
       alt: 'Dynamic gourmet popcorn and flavour explosion with caramel, cookies, chocolate and strawberry',
     },
     ingredientStickers: {
-      src: '/assets/story/ingredient-stickers.png',
+      src: getAssetUrl('/assets/story/ingredient-stickers.png'),
       alt: 'Illustrated ingredient sticker sheet featuring caramel, chocolate, cookies, strawberry, hazelnuts and popcorn',
     },
   },
   scene4: {
     mascotCelebration: {
-      src: '/assets/story/mascot-celebration.png',
+      src: getAssetUrl('/assets/story/mascot-celebration.png'),
       alt: 'POPRIO mascot celebrating in a triumphant hero pose',
     },
   },
   scene5: {
     mascotPointing: {
-      src: '/assets/story/mascot-pointing.png',
+      src: getAssetUrl('/assets/story/mascot-pointing.png'),
       alt: 'POPRIO mascot smiling and pointing toward the Chat and Order button',
     },
   },

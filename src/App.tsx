@@ -16,9 +16,75 @@ import { InteractiveGrid } from '@/components/ui/interactive-grid';
 
 gsap.registerPlugin(ScrollTrigger);
 
+function getInitialPage(): 'home' | 'about' | 'contact' {
+  if (typeof window === 'undefined') return 'home';
+
+  // 1. WordPress injected runtime page
+  const wpInitial = (window as any).POPRIO_INITIAL_PAGE || (window as any).POPRIO_DATA?.initialPage;
+  if (wpInitial === 'about' || wpInitial === 'contact' || wpInitial === 'home') {
+    return wpInitial;
+  }
+
+  // 2. Query param ?page=about / ?page=contact
+  const searchParams = new URLSearchParams(window.location.search);
+  const queryPage = searchParams.get('page');
+  if (queryPage === 'about' || queryPage === 'contact') {
+    return queryPage;
+  }
+
+  // 3. Pathname /about or /contact
+  const pathname = window.location.pathname.toLowerCase().replace(/\/+$/, '');
+  if (pathname.endsWith('/about') || pathname === '/about') {
+    return 'about';
+  }
+  if (pathname.endsWith('/contact') || pathname === '/contact') {
+    return 'contact';
+  }
+
+  // 4. Hash fallback
+  const hash = window.location.hash.toLowerCase();
+  if (hash === '#about') return 'about';
+  if (hash === '#contact') return 'contact';
+
+  return 'home';
+}
+
+function updateBrowserUrl(page: 'home' | 'about' | 'contact') {
+  if (typeof window === 'undefined') return;
+
+  const siteUrl = (window as any).POPRIO_DATA?.siteUrl;
+  let targetUrl = page === 'home' ? '/' : `/${page}`;
+
+  if (siteUrl) {
+    try {
+      const parsedSite = new URL(siteUrl);
+      const basePath = parsedSite.pathname.replace(/\/+$/, '');
+      targetUrl = page === 'home' ? (basePath || '/') : `${basePath}/${page}`;
+    } catch {
+      targetUrl = page === 'home' ? '/' : `/${page}`;
+    }
+  }
+
+  if (window.location.pathname !== targetUrl && !window.location.pathname.endsWith(`/${page}`)) {
+    window.history.pushState({ page }, '', targetUrl);
+  }
+}
+
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<'home' | 'about' | 'contact'>('home');
-  const [activeNavId, setActiveNavId] = useState<NavItemConfig['id']>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'about' | 'contact'>(getInitialPage);
+  const [activeNavId, setActiveNavId] = useState<NavItemConfig['id']>(() => getInitialPage());
+
+  // Listen for browser Back/Forward popstate events
+  useEffect(() => {
+    const handlePopState = () => {
+      const page = getInitialPage();
+      setCurrentPage(page);
+      setActiveNavId(page);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Refresh GSAP ScrollTriggers whenever the active page view switches
   useEffect(() => {
@@ -33,6 +99,7 @@ export default function App() {
       setActiveNavId(id);
 
       if (id === 'about') {
+        updateBrowserUrl('about');
         if (currentPage !== 'about') {
           setCurrentPage('about');
           window.scrollTo({ top: 0, behavior: 'auto' });
@@ -43,6 +110,7 @@ export default function App() {
       }
 
       if (id === 'contact') {
+        updateBrowserUrl('contact');
         if (currentPage !== 'contact') {
           setCurrentPage('contact');
           window.scrollTo({ top: 0, behavior: 'auto' });
@@ -53,6 +121,7 @@ export default function App() {
       }
 
       if (id === 'home') {
+        updateBrowserUrl('home');
         if (currentPage !== 'home') {
           setCurrentPage('home');
           window.scrollTo({ top: 0, behavior: 'auto' });
@@ -63,6 +132,7 @@ export default function App() {
       }
 
       if (id === 'products') {
+        updateBrowserUrl('home');
         if (currentPage !== 'home') {
           setCurrentPage('home');
           window.scrollTo({ top: 0, behavior: 'auto' });
