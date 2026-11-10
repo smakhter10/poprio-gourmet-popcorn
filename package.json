@@ -10,7 +10,11 @@
     "typecheck": "tsc --noEmit",
     "package:theme": "npm run build && node scripts/package-theme.js",
     "package:plugin": "node scripts/package-plugin.js",
-    "package:all": "npm run package:theme && npm run package:plugin"
+    "package:all": "npm run package:theme && npm run package:plugin",
+    "test:render": "php scripts/verify-render.php",
+    "test:phase3": "php scripts/test-phase-3.php",
+    "test:phase5": "php scripts/test-phase-5.php",
+    "test": "npm run typecheck && npm run test:render && npm run test:phase3 && npm run test:phase5"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.0",
