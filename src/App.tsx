@@ -12,6 +12,13 @@ import { ContactPageSection } from './components/sections/ContactPageSection';
 import { FinaleFooter } from './components/sections/FinaleFooter';
 import { PoprioContentProvider } from './context/PoprioContentContext';
 import { ProductModalProvider } from './context/ProductModalContext';
+import { PoprioEditorProvider, usePoprioEditor } from './context/PoprioEditorContext';
+import { PoprioEditorBar } from './components/editor/PoprioEditorBar';
+import { PoprioInspectorPanel } from './components/editor/PoprioInspectorPanel';
+import { PoprioRevisionsDrawer } from './components/editor/PoprioRevisionsDrawer';
+import { PoprioAdminLauncher } from './components/editor/PoprioAdminLauncher';
+import { PoprioToast } from './components/editor/PoprioToast';
+import { PoprioEditableSection } from './components/editor/PoprioEditableSection';
 import { NavItemConfig } from './config/site';
 import { InteractiveGrid } from '@/components/ui/interactive-grid';
 
@@ -71,9 +78,11 @@ function updateBrowserUrl(page: 'home' | 'about' | 'contact') {
   }
 }
 
-export default function App() {
+function AppContent() {
   const [currentPage, setCurrentPage] = useState<'home' | 'about' | 'contact'>(getInitialPage);
   const [activeNavId, setActiveNavId] = useState<NavItemConfig['id']>(() => getInitialPage());
+
+  const { isEditorActive, previewDevice } = usePoprioEditor();
 
   // Listen for browser Back/Forward popstate events
   useEffect(() => {
@@ -87,13 +96,13 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Refresh GSAP ScrollTriggers whenever the active page view switches
+  // Refresh GSAP ScrollTriggers whenever the active page view or device preview switches
   useEffect(() => {
     const timer = window.setTimeout(() => {
       ScrollTrigger.refresh();
-    }, 120);
+    }, 150);
     return () => window.clearTimeout(timer);
-  }, [currentPage]);
+  }, [currentPage, previewDevice]);
 
   const handleNavigate = useCallback(
     (id: NavItemConfig['id']) => {
@@ -151,9 +160,32 @@ export default function App() {
     [currentPage]
   );
 
+  // Responsive device frame wrapper classes
+  const isConstrainedDevice = isEditorActive && previewDevice !== 'desktop';
+  const deviceContainerClass =
+    previewDevice === 'tablet'
+      ? 'max-w-[768px] mx-auto my-6 rounded-[2rem] border-8 border-[#4B1F0F] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden transition-all duration-300'
+      : previewDevice === 'mobile'
+      ? 'max-w-[390px] mx-auto my-6 rounded-[2.5rem] border-8 border-[#4B1F0F] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] overflow-hidden transition-all duration-300'
+      : '';
+
   return (
-    <PoprioContentProvider>
-      <ProductModalProvider>
+    <div
+      className={`min-h-screen ${
+        isEditorActive ? 'pt-16 bg-[#2d1209]' : ''
+      } transition-colors duration-200`}
+    >
+      {/* Editor Top Navigation Bar */}
+      <PoprioEditorBar />
+
+      {/* Editor Slide-Over Panels */}
+      <PoprioInspectorPanel />
+      <PoprioRevisionsDrawer />
+      <PoprioToast />
+      <PoprioAdminLauncher />
+
+      {/* Main Viewport Container (Applies phone/tablet frame if device mode selected) */}
+      <div className={deviceContainerClass}>
         <div
           id="top"
           className={`min-h-screen text-cocoa-brown ${
@@ -161,36 +193,42 @@ export default function App() {
           }`}
         >
           {/* Comic-Book Header & Interactive Navigation System */}
-          <SiteHeader
-            activeNavId={activeNavId}
-            onSelectNav={handleNavigate}
-          />
+          <PoprioEditableSection sectionId="header" title="Header & WhatsApp">
+            <SiteHeader activeNavId={activeNavId} onSelectNav={handleNavigate} />
+          </PoprioEditableSection>
 
           {/* Main Content */}
           {currentPage === 'home' && (
             <main key="page-home" className="m-0 p-0">
               {/* Section 01: Hero Section with Animated Headings, Floating Corns & 5-Package Fan */}
-              <HeroSection />
+              <PoprioEditableSection sectionId="hero" title="Hero Section">
+                <HeroSection />
+              </PoprioEditableSection>
 
               {/* Shared Warm Cream & Continuous Interactive Grid Canvas for Video + Flavourverse + Origin Story */}
               <div className="relative w-full bg-warm-cream overflow-x-hidden">
-                <InteractiveGrid
-                  cellSize={44}
-                  className="z-0 text-cocoa-brown/55"
-                />
+                <InteractiveGrid cellSize={44} className="z-0 text-cocoa-brown/55" />
 
-                {/* Section 02: Sticky Scroll-Shrink Video Section (begins immediately after Hero with zero gap) */}
-                <ScrollVideoSection key="home-video" />
+                {/* Section 02: Sticky Scroll-Shrink Video Section */}
+                <PoprioEditableSection sectionId="trailer" title="Trailer Video">
+                  <ScrollVideoSection key="home-video" />
+                </PoprioEditableSection>
 
                 {/* Section 03: The Flavourverse Connected Comic-Book Showcase */}
-                <FlavourverseSection />
+                <PoprioEditableSection sectionId="flavourverse" title="Flavourverse Grid">
+                  <FlavourverseSection />
+                </PoprioEditableSection>
 
                 {/* Section 04: The Origin of the Pop — Sticky Scroll-Driven Interactive Comic Book */}
-                <OriginStorySection key="home-origin" />
+                <PoprioEditableSection sectionId="origin-story" title="Origin Story">
+                  <OriginStorySection key="home-origin" />
+                </PoprioEditableSection>
               </div>
 
-              {/* Section 05: How To Order — Solid Butter Yellow (#FFC72C) Section with Looping Animation */}
-              <HowToOrderSection />
+              {/* Section 05: How To Order — Solid Butter Yellow Section */}
+              <PoprioEditableSection sectionId="how-to-order" title="How to Order">
+                <HowToOrderSection />
+              </PoprioEditableSection>
             </main>
           )}
 
@@ -198,19 +236,22 @@ export default function App() {
             <main key="page-about" className="m-0 p-0">
               {/* Shared Warm Cream & Continuous Interactive Grid Canvas for the About Us Page */}
               <div className="relative w-full bg-warm-cream pt-[6.75rem] lg:pt-[8rem] overflow-x-hidden">
-                <InteractiveGrid
-                  cellSize={44}
-                  className="z-0 text-cocoa-brown/55"
-                />
+                <InteractiveGrid cellSize={44} className="z-0 text-cocoa-brown/55" />
 
-                {/* About Section 01: Reused Sticky Scroll-Shrink Promotional Video Section */}
-                <ScrollVideoSection key="about-video" />
+                {/* About Section 01: Promotional Video Section */}
+                <PoprioEditableSection sectionId="trailer" title="Trailer Video">
+                  <ScrollVideoSection key="about-video" />
+                </PoprioEditableSection>
 
-                {/* About Section 02: Auto-Transitioning Mascot Showcase (Left) + Brand Story (Right) */}
-                <AboutStorySection />
+                {/* About Section 02: Brand Story */}
+                <PoprioEditableSection sectionId="about" title="About Page Story">
+                  <AboutStorySection />
+                </PoprioEditableSection>
 
-                {/* About Section 03: Reused The Origin of the Pop Section */}
-                <OriginStorySection key="about-origin" />
+                {/* About Section 03: The Origin of the Pop Section */}
+                <PoprioEditableSection sectionId="origin-story" title="Origin Story">
+                  <OriginStorySection key="about-origin" />
+                </PoprioEditableSection>
               </div>
             </main>
           )}
@@ -219,22 +260,34 @@ export default function App() {
             <main key="page-contact" className="m-0 p-0">
               {/* Shared Warm Cream & Continuous Interactive Grid Canvas for the Contact Page */}
               <div className="relative w-full bg-warm-cream pt-[6.75rem] lg:pt-[8rem] overflow-x-hidden">
-                <InteractiveGrid
-                  cellSize={44}
-                  className="z-0 text-cocoa-brown/55"
-                />
+                <InteractiveGrid cellSize={44} className="z-0 text-cocoa-brown/55" />
 
-                {/* Contact Section: Comic Dispatch Hotline, Interactive Crunch Gram Form & FAQs */}
-                <ContactPageSection />
+                {/* Contact Section: Comic Dispatch Hotline & FAQs */}
+                <PoprioEditableSection sectionId="contact" title="Contact & FAQs">
+                  <ContactPageSection />
+                </PoprioEditableSection>
               </div>
             </main>
           )}
 
-          {/* Final Section + Integrated Footer — Dark Cocoa Brown (#4B1F0F) Comic Finale */}
-          <FinaleFooter key={`footer-${currentPage}`} onNavigate={handleNavigate} />
+          {/* Final Section + Integrated Footer */}
+          <PoprioEditableSection sectionId="footer" title="Finale & Footer">
+            <FinaleFooter key={`footer-${currentPage}`} onNavigate={handleNavigate} />
+          </PoprioEditableSection>
         </div>
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <PoprioContentProvider>
+      <ProductModalProvider>
+        <PoprioEditorProvider>
+          <AppContent />
+        </PoprioEditorProvider>
       </ProductModalProvider>
     </PoprioContentProvider>
   );
 }
-

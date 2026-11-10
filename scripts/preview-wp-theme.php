@@ -48,6 +48,9 @@ function get_template_directory_uri() {
 function get_option( $name, $default = false ) {
 	return $default;
 }
+function apply_filters( $tag, $value ) {
+	return $value;
+}
 function home_url( $path = '' ) {
 	return '/' . ltrim( $path, '/' );
 }

@@ -141,7 +141,9 @@ function poprio_enqueue_frontend_assets() {
 	$published_data = poprio_get_published_content();
 	$runtime_config = array(
 		'themeUri'       => $theme_uri,
-		'assetsBaseUrl'  => $theme_uri . '/assets',
+		'assetsBaseUrl'  => function_exists( 'apply_filters' )
+			? apply_filters( 'poprio_assets_base_url', defined( 'POPRIO_ASSETS_BASE_URL' ) ? POPRIO_ASSETS_BASE_URL : $theme_uri . '/assets' )
+			: ( defined( 'POPRIO_ASSETS_BASE_URL' ) ? POPRIO_ASSETS_BASE_URL : $theme_uri . '/assets' ),
 		'siteUrl'        => home_url(),
 		'initialPage'    => $initial_page,
 		'wpNonce'        => wp_create_nonce( 'wp_rest' ),
@@ -160,7 +162,42 @@ function poprio_enqueue_frontend_assets() {
 add_action( 'wp_enqueue_scripts', 'poprio_enqueue_frontend_assets', 10 );
 
 /**
- * Filter script tags to add type="module" for Vite ES module scripts.
+ * Output POPRIO runtime data early in <head> so it is guaranteed to be available
+ * before any ES module or deferred script executes.
+ */
+function poprio_print_head_runtime_config() {
+	$theme_uri    = get_template_directory_uri();
+	$initial_page = 'home';
+	if ( is_page( 'about' ) || is_page_template( 'page-about.php' ) || get_query_var( 'poprio_page' ) === 'about' ) {
+		$initial_page = 'about';
+	} elseif ( is_page( 'contact' ) || is_page_template( 'page-contact.php' ) || get_query_var( 'poprio_page' ) === 'contact' ) {
+		$initial_page = 'contact';
+	}
+
+	$published_data = poprio_get_published_content();
+	$runtime_config = array(
+		'themeUri'       => $theme_uri,
+		'assetsBaseUrl'  => function_exists( 'apply_filters' )
+			? apply_filters( 'poprio_assets_base_url', defined( 'POPRIO_ASSETS_BASE_URL' ) ? POPRIO_ASSETS_BASE_URL : $theme_uri . '/assets' )
+			: ( defined( 'POPRIO_ASSETS_BASE_URL' ) ? POPRIO_ASSETS_BASE_URL : $theme_uri . '/assets' ),
+		'siteUrl'        => home_url(),
+		'initialPage'    => $initial_page,
+		'wpNonce'        => wp_create_nonce( 'wp_rest' ),
+		'restUrl'        => esc_url_raw( rest_url( 'poprio/v1' ) ),
+		'isAdmin'        => is_user_logged_in() && current_user_can( 'edit_pages' ),
+		'published'      => $published_data,
+	);
+
+	echo "<script id=\"poprio-data\">\n";
+	echo 'window.POPRIO_DATA = ' . wp_json_encode( $runtime_config ) . ";\n";
+	echo 'window.POPRIO_THEME_URI = ' . wp_json_encode( $theme_uri ) . ";\n";
+	echo 'window.POPRIO_INITIAL_PAGE = ' . wp_json_encode( $initial_page ) . ";\n";
+	echo "</script>\n";
+}
+add_action( 'wp_head', 'poprio_print_head_runtime_config', 1 );
+
+/**
+ * Filter script tags to add type="module" for Vite ES module scripts without clobbering other attributes.
  *
  * @param string $tag    Script HTML tag.
  * @param string $handle Script handle.
@@ -169,7 +206,9 @@ add_action( 'wp_enqueue_scripts', 'poprio_enqueue_frontend_assets', 10 );
  */
 function poprio_filter_script_type_module( $tag, $handle, $src ) {
 	if ( str_starts_with( $handle, 'poprio-frontend' ) || str_starts_with( $handle, 'poprio-chunk-' ) || 'poprio-vite-client' === $handle ) {
-		return '<script type="module" src="' . esc_url( $src ) . '"></script>' . "\n";
+		if ( false === strpos( $tag, 'type="module"' ) ) {
+			return str_replace( '<script ', '<script type="module" ', $tag );
+		}
 	}
 	return $tag;
 }

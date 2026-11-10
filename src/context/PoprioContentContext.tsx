@@ -42,10 +42,10 @@ import { getAssetUrl } from '../lib/assets';
  */
 function normalizeAssetUrl(url: string | undefined): string {
   if (!url) return '';
-  if (url.startsWith('/assets/')) {
-    return getAssetUrl(url);
+  if (/^(https?:)?\/\//.test(url) || url.startsWith('data:')) {
+    return url;
   }
-  return url;
+  return getAssetUrl(url);
 }
 
 /**
