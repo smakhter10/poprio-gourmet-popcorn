@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 
 export interface OrderingStepData {
-  stepNumber: '01' | '02' | '03';
+  stepNumber: string;
   title: string;
   description: string;
 }

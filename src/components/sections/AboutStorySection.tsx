@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ORIGIN_STORY_ASSETS } from '../../data/originStoryData';
+import { usePoprioContent } from '../../context/PoprioContentContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -45,6 +46,7 @@ const MASCOT_POSES: readonly MascotPoseItem[] = [
 ] as const;
 
 export const AboutStorySection: React.FC = () => {
+  const { about } = usePoprioContent();
   const sectionRef = useRef<HTMLElement>(null);
   const leftColRef = useRef<HTMLDivElement>(null);
   const rightColRef = useRef<HTMLDivElement>(null);
@@ -290,7 +292,7 @@ export const AboutStorySection: React.FC = () => {
           {/* Small Eyebrow Badge */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-butter-yellow border-[0.15rem] border-cocoa-brown shadow-[0.15rem_0.15rem_0_#4B1F0F]">
             <span className="font-jakarta text-[0.6875rem] sm:text-xs font-extrabold tracking-[0.14em] text-cocoa-brown uppercase">
-              OUR STORY <span className="text-red-orange mx-1">✦</span> BORN IN DHAKA
+              {about?.eyebrow || 'OUR STORY ✦ BORN IN DHAKA'}
             </span>
           </div>
 
@@ -299,10 +301,16 @@ export const AboutStorySection: React.FC = () => {
             id="about-story-heading"
             className="m-0 mt-4 sm:mt-5 font-hero text-2xl sm:text-4xl lg:text-[clamp(2.5rem,4.2vw,3.75rem)] leading-[1.06] tracking-[-0.02em] text-cocoa-brown uppercase"
           >
-            WE DIDN&apos;T JUST MAKE POPCORN.{' '}
-            <span className="text-red-orange">
-              WE STARTED A CRUNCH REVOLUTION.
-            </span>
+            {about?.heading ? (
+              about.heading
+            ) : (
+              <>
+                WE DIDN&apos;T JUST MAKE POPCORN.{' '}
+                <span className="text-red-orange">
+                  WE STARTED A CRUNCH REVOLUTION.
+                </span>
+              </>
+            )}
           </h1>
 
           {/* Comic Inked Underline Accent */}
@@ -329,17 +337,27 @@ export const AboutStorySection: React.FC = () => {
 
           {/* 3-Paragraph Long About Us Copy */}
           <div className="mt-5 sm:mt-6 flex flex-col gap-4 sm:gap-5 font-jakarta text-sm sm:text-base lg:text-[1.0625rem] font-semibold leading-relaxed text-cocoa-brown/90">
-            <p className="m-0">
-              Born in the heart of Dhaka, <strong className="font-extrabold text-cocoa-brown">POPRIO</strong> started with a simple, stubborn question: why was everyone settling for lifeless, cardboard-tasting popcorn? We believed snack time deserved genuine excitement — the kind of bold, unapologetic flavour that makes you pause mid-crunch and reach straight back into the bag.
-            </p>
+            {about?.paragraphs?.length ? (
+              about.paragraphs.map((para, idx) => (
+                <p key={idx} className="m-0">
+                  {para}
+                </p>
+              ))
+            ) : (
+              <>
+                <p className="m-0">
+                  Born in the heart of Dhaka, <strong className="font-extrabold text-cocoa-brown">POPRIO</strong> started with a simple, stubborn question: why was everyone settling for lifeless, cardboard-tasting popcorn? We believed snack time deserved genuine excitement — the kind of bold, unapologetic flavour that makes you pause mid-crunch and reach straight back into the bag.
+                </p>
 
-            <p className="m-0">
-              Every single pouch of POPRIO is crafted in small batches using giant, cloud-like mushroom kernels popped to airy perfection. From slow-simmered golden caramel and real creamery butter to crushed dark cocoa cookies, tangy strawberry glazes, and roasted hazelnuts, we layer real, indulgent ingredients until every kernel is coated with main-character energy.
-            </p>
+                <p className="m-0">
+                  Every single pouch of POPRIO is crafted in small batches using giant, cloud-like mushroom kernels popped to airy perfection. From slow-simmered golden caramel and real creamery butter to crushed dark cocoa cookies, tangy strawberry glazes, and roasted hazelnuts, we layer real, indulgent ingredients until every kernel is coated with main-character energy.
+                </p>
 
-            <p className="m-0">
-              Whether you&apos;re queuing up a late-night movie marathon, sharing a pouch with friends across town, or satisfying a midnight sweet-and-salty craving, POPRIO is built to bring colour, playfulness, and an unforgettable crunch to every moment. No boring kernels. No compromises. Just flavour that pops.
-            </p>
+                <p className="m-0">
+                  Whether you&apos;re queuing up a late-night movie marathon, sharing a pouch with friends across town, or satisfying a midnight sweet-and-salty craving, POPRIO is built to bring colour, playfulness, and an unforgettable crunch to every moment. No boring kernels. No compromises. Just flavour that pops.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>

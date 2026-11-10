@@ -10,6 +10,7 @@ import {
   WHATSAPP_NUMBER,
 } from '../../config/site';
 import { ORIGIN_STORY_ASSETS } from '../../data/originStoryData';
+import { usePoprioContent } from '../../context/PoprioContentContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -38,6 +39,7 @@ export interface FinaleFooterProps {
 }
 
 export const FinaleFooter: React.FC<FinaleFooterProps> = ({ onNavigate }) => {
+  const { footer, meta } = usePoprioContent();
   const footerRef = useRef<HTMLElement>(null);
   const statementRef = useRef<HTMLParagraphElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
@@ -48,9 +50,13 @@ export const FinaleFooter: React.FC<FinaleFooterProps> = ({ onNavigate }) => {
 
   const currentYear = new Date().getFullYear();
 
-  const whatsappUrl = getWhatsAppOrderUrl(WHATSAPP_NUMBER, WHATSAPP_GREETING);
+  const whatsappUrl = getWhatsAppOrderUrl(
+    meta?.whatsappNumber || WHATSAPP_NUMBER,
+    meta?.whatsappGreeting || WHATSAPP_GREETING
+  );
 
-  const instagramEntry = SOCIAL_LINKS.find((item) => item.id === 'instagram');
+  const socialLinks = meta?.socialLinks?.length ? meta.socialLinks : SOCIAL_LINKS;
+  const instagramEntry = socialLinks.find((item) => item.id === 'instagram');
   const instagramUrl = normalizeExternalUrl(instagramEntry?.url);
 
   const scrollToSection = (sectionId: string) => {
@@ -233,7 +239,7 @@ export const FinaleFooter: React.FC<FinaleFooterProps> = ({ onNavigate }) => {
           ref={statementRef}
           className="m-0 font-jakarta text-[0.625rem] sm:text-xs md:text-[0.875rem] font-extrabold tracking-[0.11em] md:tracking-[0.18em] text-butter-yellow uppercase"
         >
-          SMALL BATCHES <span aria-hidden="true" className="mx-1 md:mx-1.5 text-red-orange">✦</span> BIG CRAVINGS <span aria-hidden="true" className="mx-1 md:mx-1.5 text-red-orange">✦</span> FLAVOUR THAT POPS
+          {footer?.statement || 'SMALL BATCHES ✦ BIG CRAVINGS ✦ FLAVOUR THAT POPS'}
         </p>
 
         {/* 2. Large Central Headline */}
@@ -245,7 +251,7 @@ export const FinaleFooter: React.FC<FinaleFooterProps> = ({ onNavigate }) => {
             textShadow: '0.25rem 0.25rem 0 #E0351B, 0.45rem 0.45rem 0 #260E06',
           }}
         >
-          READY TO POP IN?
+          {footer?.headline || 'READY TO POP IN?'}
         </h2>
 
         {/* 3. Supporting Copy */}
@@ -253,7 +259,7 @@ export const FinaleFooter: React.FC<FinaleFooterProps> = ({ onNavigate }) => {
           ref={copyRef}
           className="m-0 mt-3 sm:mt-6 max-w-[40rem] font-jakarta text-sm sm:text-base lg:text-[clamp(1.125rem,1.4vw,1.375rem)] font-bold leading-relaxed text-warm-cream/90"
         >
-          Your next popcorn obsession is only a WhatsApp message away.
+          {footer?.copy || 'Your next popcorn obsession is only a WhatsApp message away.'}
         </p>
 
         {/* 4. Two Prominent CTA Buttons */}
@@ -270,7 +276,7 @@ export const FinaleFooter: React.FC<FinaleFooterProps> = ({ onNavigate }) => {
               className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-butter-yellow text-cocoa-brown border-[0.22rem] border-solid border-[#260E06] font-jakarta text-sm sm:text-[1rem] font-extrabold tracking-[0.06em] uppercase cursor-pointer select-none shadow-[0.3125rem_0.3125rem_0_#E0351B] transition-all duration-200 hover:-translate-y-1 hover:-rotate-1 hover:shadow-[0.45rem_0.45rem_0_#E0351B] active:translate-y-0.5 active:rotate-0 active:shadow-[0.15rem_0.15rem_0_#E0351B]"
             >
               <WhatsAppFinaleIcon />
-              <span>CHAT ON WHATSAPP</span>
+              <span>{footer?.ctaWhatsAppText || 'CHAT ON WHATSAPP'}</span>
             </a>
           ) : (
             <button
@@ -280,7 +286,7 @@ export const FinaleFooter: React.FC<FinaleFooterProps> = ({ onNavigate }) => {
               className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-butter-yellow text-cocoa-brown border-[0.22rem] border-solid border-[#260E06] font-jakarta text-sm sm:text-[1rem] font-extrabold tracking-[0.06em] uppercase opacity-90 cursor-not-allowed select-none shadow-[0.3125rem_0.3125rem_0_#E0351B]"
             >
               <WhatsAppFinaleIcon />
-              <span>CHAT ON WHATSAPP</span>
+              <span>{footer?.ctaWhatsAppText || 'CHAT ON WHATSAPP'}</span>
             </button>
           )}
 
@@ -296,7 +302,7 @@ export const FinaleFooter: React.FC<FinaleFooterProps> = ({ onNavigate }) => {
             }}
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-warm-cream text-cocoa-brown border-[0.22rem] border-solid border-[#260E06] font-jakarta text-sm sm:text-[1rem] font-extrabold tracking-[0.06em] uppercase cursor-pointer select-none shadow-[0.3125rem_0.3125rem_0_#260E06] transition-all duration-200 hover:-translate-y-1 hover:rotate-1 hover:shadow-[0.45rem_0.45rem_0_#260E06] active:translate-y-0.5 active:rotate-0 active:shadow-[0.15rem_0.15rem_0_#260E06]"
           >
-            <span>VIEW FLAVOURS</span>
+            <span>{footer?.ctaFlavoursText || 'VIEW FLAVOURS'}</span>
           </button>
         </div>
 
@@ -428,7 +434,7 @@ export const FinaleFooter: React.FC<FinaleFooterProps> = ({ onNavigate }) => {
         <div className="w-full max-w-[84rem] mx-auto px-4 sm:px-6 lg:px-10 py-4 md:py-5 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4">
           {/* Left: Dynamic Copyright */}
           <p className="m-0 font-jakarta text-[0.6875rem] md:text-[0.8125rem] font-bold tracking-[0.06em] md:tracking-[0.08em] text-warm-cream/85 uppercase text-center md:text-left">
-            &copy; {currentYear} POPRIO. ALL RIGHTS RESERVED.
+            &copy; {currentYear} {meta?.name || 'POPRIO'}. {footer?.copyrightText ? footer.copyrightText.toUpperCase() : 'ALL RIGHTS RESERVED.'}
           </p>
 
           {/* Right: Tagline + Back-to-Top Button */}

@@ -7,6 +7,7 @@ import {
 } from '../../config/site';
 import { OrderingStep, OrderingStepData } from './OrderingStep';
 import { getAssetUrl } from '../../lib/assets';
+import { usePoprioContent } from '../../context/PoprioContentContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -63,9 +64,12 @@ export const HowToOrderSection: React.FC = () => {
   const stepItemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const ctaWrapRef = useRef<HTMLDivElement>(null);
 
+  const { howToOrder, meta } = usePoprioContent();
+  const effectiveSteps = howToOrder?.steps?.length ? howToOrder.steps : ORDERING_STEPS;
+
   const whatsappUrl = getWhatsAppOrderUrl(
-    WHATSAPP_NUMBER,
-    HOW_TO_ORDER_PREFILLED_MESSAGE
+    meta?.whatsappNumber || WHATSAPP_NUMBER,
+    howToOrder?.whatsappMessage || HOW_TO_ORDER_PREFILLED_MESSAGE
   );
 
   const [isMobile, setIsMobile] = useState<boolean>(() => {
@@ -84,8 +88,8 @@ export const HowToOrderSection: React.FC = () => {
   }, []);
 
   const activeVideoSrc = isMobile
-    ? HOW_TO_ORDER_MOBILE_VIDEO_SRC
-    : HOW_TO_ORDER_VIDEO_SRC;
+    ? (howToOrder?.videoSrcMobile || HOW_TO_ORDER_MOBILE_VIDEO_SRC)
+    : (howToOrder?.videoSrc || HOW_TO_ORDER_VIDEO_SRC);
 
   // Viewport & tab visibility playback optimization + reduced-motion handling
   useEffect(() => {
@@ -275,7 +279,7 @@ export const HowToOrderSection: React.FC = () => {
             ref={eyebrowRef}
             className="m-0 font-jakarta text-xs sm:text-[0.875rem] font-extrabold tracking-[0.16em] text-red-orange uppercase"
           >
-            IT&apos;S EASY AS 1, 2, POP!
+            {howToOrder?.eyebrow || "IT'S EASY AS 1, 2, POP!"}
           </p>
 
           {/* B. Large Heading */}
@@ -284,7 +288,7 @@ export const HowToOrderSection: React.FC = () => {
             ref={titleRef}
             className="m-0 mt-2 sm:mt-3 font-hero text-xl sm:text-3xl md:text-4xl lg:text-[clamp(2.5rem,4.6vw,4.5rem)] leading-tight lg:leading-[1.02] tracking-[-0.015em] text-cocoa-brown uppercase"
           >
-            CRAVE IT. CHAT IT. CRUNCH IT.
+            {howToOrder?.title || 'CRAVE IT. CHAT IT. CRUNCH IT.'}
           </h2>
 
           {/* C. Short Supporting Description */}
@@ -292,7 +296,7 @@ export const HowToOrderSection: React.FC = () => {
             ref={descriptionRef}
             className="m-0 mt-1.5 sm:mt-2.5 md:mt-3.5 font-jakarta text-xs sm:text-sm md:text-base lg:text-[clamp(1.0625rem,1.35vw,1.25rem)] font-bold leading-relaxed text-cocoa-brown/85"
           >
-            Three simple steps to your next popcorn obsession.
+            {howToOrder?.subtitle || 'Three simple steps to your next popcorn obsession.'}
           </p>
         </div>
 
@@ -314,11 +318,11 @@ export const HowToOrderSection: React.FC = () => {
             className="block w-full h-auto aspect-[9/16] md:aspect-auto object-contain bg-[#FFC72C] m-0 p-0 border-0 shadow-none rounded-none"
           >
             <source
-              src={HOW_TO_ORDER_MOBILE_VIDEO_SRC}
+              src={howToOrder?.videoSrcMobile || HOW_TO_ORDER_MOBILE_VIDEO_SRC}
               media="(max-width: 768px)"
               type="video/mp4"
             />
-            <source src={HOW_TO_ORDER_VIDEO_SRC} type="video/mp4" />
+            <source src={howToOrder?.videoSrc || HOW_TO_ORDER_VIDEO_SRC} type="video/mp4" />
           </video>
         </div>
 
@@ -329,14 +333,14 @@ export const HowToOrderSection: React.FC = () => {
           ref={stepsGroupRef}
           className="w-full max-w-[68rem] mx-auto mt-5 sm:mt-7 md:mt-8 lg:mt-10 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10 items-start"
         >
-          {ORDERING_STEPS.map((step, index) => (
+          {effectiveSteps.map((step, index) => (
             <OrderingStep
               key={step.stepNumber}
               ref={(el) => {
                 stepItemRefs.current[index] = el;
               }}
               step={step}
-              isLast={index === ORDERING_STEPS.length - 1}
+              isLast={index === effectiveSteps.length - 1}
             />
           ))}
         </div>

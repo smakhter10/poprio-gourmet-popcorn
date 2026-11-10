@@ -154,10 +154,12 @@ export function shufflePackagesFisherYates(
  */
 let pageLoadShuffledPackages: readonly HeroPackageItem[] | null = null;
 
-export function getPageLoadShuffledPackages(): readonly HeroPackageItem[] {
+export function getPageLoadShuffledPackages(
+  source: readonly HeroPackageItem[] = HERO_PACKAGES
+): readonly HeroPackageItem[] {
   if (!pageLoadShuffledPackages) {
     pageLoadShuffledPackages = Object.freeze(
-      shufflePackagesFisherYates(HERO_PACKAGES)
+      shufflePackagesFisherYates(source)
     );
   }
   return pageLoadShuffledPackages;

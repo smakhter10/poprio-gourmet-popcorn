@@ -11,6 +11,7 @@ import {
 } from '../../config/site';
 import { ComicBubble } from './ComicBubble';
 import { ComicSoundEffect } from './ComicSoundEffect';
+import { usePoprioContent } from '../../context/PoprioContentContext';
 
 function WhatsAppCtaIcon() {
   return (
@@ -60,12 +61,15 @@ export const OriginStoryScene: React.FC<OriginStorySceneProps> = ({
   staticMode = false,
   isInteractiveActive = true,
 }) => {
+  const { originStory, meta } = usePoprioContent();
   const sceneConfig =
-    ORIGIN_STORY_SCENES[sceneNumber - 1] ?? ORIGIN_STORY_SCENES[0];
+    originStory?.scenes?.[sceneNumber - 1] ??
+    ORIGIN_STORY_SCENES[sceneNumber - 1] ??
+    ORIGIN_STORY_SCENES[0];
 
   const whatsappOrderUrl = getWhatsAppOrderUrl(
-    WHATSAPP_NUMBER,
-    WHATSAPP_GREETING
+    meta?.whatsappNumber || WHATSAPP_NUMBER,
+    meta?.whatsappGreeting || WHATSAPP_GREETING
   );
 
   const wrapperPositionClass = staticMode

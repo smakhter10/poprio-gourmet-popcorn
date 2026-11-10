@@ -8,11 +8,14 @@ import {
   HeroSlotConfig,
 } from '../../data/heroPackages';
 import { useProductModal } from '../../context/ProductModalContext';
+import { usePoprioContent } from '../../context/PoprioContentContext';
 
 export const HeroPackageShowcase: React.FC = () => {
+  const { hero } = usePoprioContent();
+
   // Initialized once per page load via Fisher–Yates shuffle; never reshuffled on re-render or modal open.
   const [shuffledPackages] = useState<readonly HeroPackageItem[]>(() =>
-    getPageLoadShuffledPackages()
+    getPageLoadShuffledPackages(hero?.packages?.length ? hero.packages : undefined)
   );
 
   const [mobileIndex, setMobileIndex] = useState<number>(0);

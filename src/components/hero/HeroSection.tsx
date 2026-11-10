@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 import { RotatingText, RotatingWordItem } from './RotatingText';
 import { HeroPackageShowcase } from './HeroPackageShowcase';
 import { HeroFloatingCorns } from './HeroFloatingCorns';
+import { usePoprioContent } from '../../context/PoprioContentContext';
 
 /**
  * Line 1 rotating words in natural Title Case:
@@ -96,6 +97,10 @@ const UNIFORM_HERO_TEXT_SIZE =
   'text-[clamp(1.75rem,7.2vw,2.25rem)] sm:text-[clamp(1.85rem,3.4vw,2.5rem)] lg:text-[clamp(2rem,3.4vw,3.125rem)]';
 
 export const HeroSection: React.FC = () => {
+  const { hero } = usePoprioContent();
+  const primaryWords = hero?.primaryWords?.length ? hero.primaryWords : HERO_PRIMARY_WORDS;
+  const flavourWords = hero?.flavourWords?.length ? hero.flavourWords : HERO_FLAVOUR_WORDS;
+
   const handleExploreClick = () => {
     const showcaseEl = document.getElementById('hero-packages-showcase');
     showcaseEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -120,18 +125,18 @@ export const HeroSection: React.FC = () => {
             =================================================================== */}
         <h1 className="m-0 flex flex-col md:flex-row items-center justify-center gap-x-2.5 sm:gap-x-4 gap-y-2.5 sm:gap-y-3">
           <span className="sr-only">
-            Not Your Ordinary Popcorn, Snack, Craving, or Treat.
+            {hero?.eyebrow1 || 'Not Your Ordinary'} Popcorn, Snack, Craving, or Treat.
           </span>
 
           <span
             aria-hidden="true"
             className={`comic-heading-white font-hero ${UNIFORM_HERO_TEXT_SIZE} leading-[1.15] tracking-[0.01em] whitespace-nowrap block`}
           >
-            Not Your Ordinary
+            {hero?.eyebrow1 || 'Not Your Ordinary'}
           </span>
 
           <RotatingText
-            items={HERO_PRIMARY_WORDS}
+            items={primaryWords}
             iconVariant="popcorn"
             displayDuration={2.4}
             transitionDuration={0.42}
@@ -147,7 +152,7 @@ export const HeroSection: React.FC = () => {
             =================================================================== */}
         <h2 className="m-0 flex flex-col md:flex-row items-center justify-center gap-x-2.5 sm:gap-x-4 gap-y-2.5 sm:gap-y-3">
           <span className="sr-only">
-            Your Next Obsession? Cookies and Cream, Caramel, Strawberry, or
+            {hero?.eyebrow2 || 'Your Next Obsession?'} Cookies and Cream, Caramel, Strawberry, or
             Choco Hazelnut.
           </span>
 
@@ -155,11 +160,11 @@ export const HeroSection: React.FC = () => {
             aria-hidden="true"
             className={`comic-heading-white font-hero ${UNIFORM_HERO_TEXT_SIZE} leading-[1.15] tracking-[0.01em] whitespace-nowrap block`}
           >
-            Your Next Obsession?
+            {hero?.eyebrow2 || 'Your Next Obsession?'}
           </span>
 
           <RotatingText
-            items={HERO_FLAVOUR_WORDS}
+            items={flavourWords}
             iconVariant="flavour"
             displayDuration={2.4}
             transitionDuration={0.42}
@@ -172,8 +177,7 @@ export const HeroSection: React.FC = () => {
             HERO SUBTITLE (Space Grotesk)
             =================================================================== */}
         <p className="mt-1 max-w-[38rem] font-subtitle text-xs sm:text-base lg:text-[clamp(1.0625rem,1.35vw,1.25rem)] font-bold leading-relaxed text-cocoa-brown tracking-[-0.01em] px-3">
-          Handcrafted in small batches with bold, crunchy flavours that turn
-          every handful into a comic-sized flavour explosion.
+          {hero?.subtitle || 'Handcrafted in small batches with bold, crunchy flavours that turn every handful into a comic-sized flavour explosion.'}
         </p>
 
         {/* ===================================================================
@@ -185,7 +189,7 @@ export const HeroSection: React.FC = () => {
             onClick={handleExploreClick}
             className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-7 sm:py-3.5 rounded-full bg-cocoa-brown text-warm-cream font-subtitle text-sm sm:text-[1rem] font-bold tracking-tight cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap shrink-0"
           >
-            <span>Explore Flavours</span>
+            <span>{hero?.ctaText || 'Explore Flavours'}</span>
             <ArrowRight
               aria-hidden="true"
               className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] transition-transform duration-200 group-hover:translate-x-1"

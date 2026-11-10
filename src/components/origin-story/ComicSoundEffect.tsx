@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 
-export type AllowedSoundWord = 'MEH...' | 'AHA!' | 'POP!' | 'CRUNCH!' | 'BOOM!';
+export type AllowedSoundWord = 'MEH...' | 'AHA!' | 'POP!' | 'CRUNCH!' | 'BOOM!' | string;
 
 export interface ComicSoundEffectProps {
   word: AllowedSoundWord;

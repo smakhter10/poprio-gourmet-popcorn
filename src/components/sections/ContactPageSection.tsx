@@ -18,6 +18,7 @@ import {
 } from '../../config/site';
 import { POPRIO_PRODUCTS } from '../../data/products';
 import { ORIGIN_STORY_ASSETS } from '../../data/originStoryData';
+import { usePoprioContent } from '../../context/PoprioContentContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -104,34 +105,46 @@ function WhatsAppSvg() {
 }
 
 export const ContactPageSection: React.FC = () => {
+  const { contact, meta, products } = usePoprioContent();
+  const effectiveTopics = contact?.topics?.length ? contact.topics : INQUIRY_TOPICS;
+  const effectiveFaqs = contact?.faqs?.length ? contact.faqs : CONTACT_FAQS;
+  const effectiveProducts = products?.length ? products : POPRIO_PRODUCTS;
+  const effectivePhone = contact?.phone || '+880 1705-117793';
+  const effectiveEmail = contact?.email || 'HELLO@EATPOPRIO.COM';
+  const effectiveLocation = contact?.location || 'DHAKA, BANGLADESH';
+  const effectiveHours = contact?.hours || 'DAILY · 10 AM – 10 PM';
+  const whatsappNumber = meta?.whatsappNumber || WHATSAPP_NUMBER;
+
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const leftColRef = useRef<HTMLDivElement>(null);
   const rightColRef = useRef<HTMLDivElement>(null);
   const faqRef = useRef<HTMLDivElement>(null);
 
-  const [selectedTopic, setSelectedTopic] =
-    useState<InquiryTopicId>('party-order');
-  const [selectedFlavourId, setSelectedFlavourId] =
-    useState<string>('pkg-caramel');
+  const [selectedTopic, setSelectedTopic] = useState<string>(
+    effectiveTopics[0]?.id || 'party-order'
+  );
+  const [selectedFlavourId, setSelectedFlavourId] = useState<string>(
+    effectiveProducts[0]?.id || 'pkg-caramel'
+  );
   const [senderName, setSenderName] = useState<string>('');
   const [senderPhone, setSenderPhone] = useState<string>('');
   const [senderEmail, setSenderEmail] = useState<string>('');
   const [messageText, setMessageText] = useState<string>('');
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const [openFaqId, setOpenFaqId] = useState<string | null>('faq-delivery');
+  const [openFaqId, setOpenFaqId] = useState<string | null>(effectiveFaqs[0]?.id || 'faq-delivery');
 
   const directWhatsAppUrl = getWhatsAppOrderUrl(
-    WHATSAPP_NUMBER,
+    whatsappNumber,
     "Hi POPRIO! I'm reaching out from your Contact page."
   );
 
   // Build dynamic WhatsApp message from form fields
   const buildFormWhatsAppUrl = () => {
     const topicLabel =
-      INQUIRY_TOPICS.find((t) => t.id === selectedTopic)?.label ?? 'Inquiry';
+      effectiveTopics.find((t) => t.id === selectedTopic)?.label ?? 'Inquiry';
     const flavourTitle =
-      POPRIO_PRODUCTS.find((p) => p.id === selectedFlavourId)?.title ??
+      effectiveProducts.find((p) => p.id === selectedFlavourId)?.title ??
       'All Flavours';
 
     const lines = [
@@ -146,7 +159,7 @@ export const ContactPageSection: React.FC = () => {
       .filter(Boolean)
       .join('\n');
 
-    return getWhatsAppOrderUrl(WHATSAPP_NUMBER, lines);
+    return getWhatsAppOrderUrl(whatsappNumber, lines);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -247,7 +260,7 @@ export const ContactPageSection: React.FC = () => {
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-butter-yellow border-[0.16rem] border-cocoa-brown shadow-[0.18rem_0.18rem_0_#4B1F0F]">
           <Sparkles className="w-3.5 h-3.5 text-red-orange stroke-[2.75]" />
           <span className="font-jakarta text-[0.6875rem] sm:text-xs font-extrabold tracking-[0.15em] text-cocoa-brown uppercase">
-            THE POPRIO HOTLINE ✦ DHAKA CRUNCH HQ
+            {contact?.eyebrow || 'THE POPRIO HOTLINE ✦ DHAKA CRUNCH HQ'}
           </span>
         </div>
 
@@ -256,7 +269,13 @@ export const ContactPageSection: React.FC = () => {
           id="contact-page-heading"
           className="m-0 mt-4 font-hero text-3xl sm:text-5xl lg:text-[clamp(3.25rem,5.8vw,5.5rem)] leading-[1.0] tracking-[-0.02em] text-cocoa-brown uppercase"
         >
-          LET&apos;S TALK <span className="text-red-orange">POPCORN!</span>
+          {contact?.headline ? (
+            contact.headline
+          ) : (
+            <>
+              LET&apos;S TALK <span className="text-red-orange">POPCORN!</span>
+            </>
+          )}
         </h1>
 
         {/* Comic Inked Underline */}
@@ -283,9 +302,8 @@ export const ContactPageSection: React.FC = () => {
 
         {/* Supporting Subtitle */}
         <p className="m-0 mt-3.5 max-w-[38rem] font-jakarta text-sm sm:text-base lg:text-[1.125rem] font-bold leading-relaxed text-cocoa-brown/85">
-          Planning a movie night, ordering bulk party pouches, looking to stock
-          POPRIO at your store, or just want to say hello? Drop us a Crunch Gram
-          below!
+          {contact?.subtitle ||
+            'Planning a movie night, ordering bulk party pouches, looking to stock POPRIO at your store, or just want to say hello? Drop us a Crunch Gram below!'}
         </p>
       </div>
 
@@ -336,7 +354,7 @@ export const ContactPageSection: React.FC = () => {
                 </p>
                 <p className="m-0 mt-2.5 inline-flex items-center gap-1.5 font-hero text-sm sm:text-base text-cocoa-brown">
                   <PhoneCall className="w-4 h-4 text-red-orange stroke-[2.75]" />
-                  <span>+880 1705-117793</span>
+                  <span>{effectivePhone}</span>
                 </p>
               </div>
 
@@ -376,7 +394,7 @@ export const ContactPageSection: React.FC = () => {
                   EMAIL &amp; PARTNERSHIPS
                 </p>
                 <p className="m-0 font-hero text-sm sm:text-base text-cocoa-brown truncate">
-                  HELLO@EATPOPRIO.COM
+                  {effectiveEmail}
                 </p>
               </div>
             </div>
@@ -394,7 +412,7 @@ export const ContactPageSection: React.FC = () => {
                   KITCHEN &amp; DISPATCH HQ
                 </p>
                 <p className="m-0 font-hero text-sm sm:text-base text-cocoa-brown">
-                  DHAKA, BANGLADESH
+                  {effectiveLocation}
                 </p>
               </div>
             </div>
@@ -412,7 +430,7 @@ export const ContactPageSection: React.FC = () => {
                   POPPING HOURS
                 </p>
                 <p className="m-0 font-hero text-sm sm:text-base text-cocoa-brown">
-                  DAILY · 10 AM – 10 PM
+                  {effectiveHours}
                 </p>
               </div>
             </div>
@@ -427,7 +445,7 @@ export const ContactPageSection: React.FC = () => {
               JOIN THE CRUNCH CLUB:
             </span>
             <div className="flex flex-wrap items-center gap-2.5 w-full">
-              {SOCIAL_LINKS.map((social) => {
+              {(meta?.socialLinks?.length ? meta.socialLinks : SOCIAL_LINKS).map((social) => {
                 const href = /^https?:\/\//i.test(social.url)
                   ? social.url
                   : `https://${social.url}`;
@@ -517,7 +535,7 @@ export const ContactPageSection: React.FC = () => {
                     01. WHAT&apos;S POPPING? (SELECT TOPIC)
                   </label>
                   <div className="grid grid-cols-2 gap-2.5">
-                    {INQUIRY_TOPICS.map((topic) => {
+                    {effectiveTopics.map((topic) => {
                       const active = selectedTopic === topic.id;
                       return (
                         <button
@@ -553,7 +571,7 @@ export const ContactPageSection: React.FC = () => {
                     02. PICK YOUR FAVOURITE FLAVOUR
                   </label>
                   <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
-                    {POPRIO_PRODUCTS.map((product) => {
+                    {effectiveProducts.map((product) => {
                       const isSelected = selectedFlavourId === product.id;
                       const shortName = product.title
                         .replace(' Popcorn', '')
@@ -689,7 +707,7 @@ export const ContactPageSection: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
-          {CONTACT_FAQS.map((faq, idx) => {
+          {effectiveFaqs.map((faq, idx) => {
             const isOpen = openFaqId === faq.id;
             return (
               <div

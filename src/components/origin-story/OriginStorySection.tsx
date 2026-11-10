@@ -8,6 +8,7 @@ import {
 import { ComicSoundEffect } from './ComicSoundEffect';
 import { OriginStoryStage } from './OriginStoryStage';
 import { OriginStoryScene } from './OriginStoryScene';
+import { usePoprioContent } from '../../context/PoprioContentContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -151,6 +152,9 @@ export const OriginStorySection: React.FC = () => {
     };
   }, [prefersReducedMotion]);
 
+  const { originStory } = usePoprioContent();
+  const intro = originStory?.intro ?? ORIGIN_STORY_INTRO;
+
   return (
     <section
       id="origin-story"
@@ -170,7 +174,7 @@ export const OriginStorySection: React.FC = () => {
           ref={eyebrowRef}
           className="m-0 font-jakarta text-[0.875rem] font-extrabold tracking-[0.16em] text-red-orange uppercase"
         >
-          {ORIGIN_STORY_INTRO.eyebrow}
+          {intro.eyebrow}
         </p>
 
         {/* Oversized Main Heading + Playful POP! Sticker Accent */}
@@ -180,7 +184,7 @@ export const OriginStorySection: React.FC = () => {
             ref={headingRef}
             className="m-0 font-hero text-3xl sm:text-4xl lg:text-[clamp(3rem,5.2vw,5rem)] leading-[1.0] lg:leading-[0.98] tracking-[-0.02em] text-cocoa-brown uppercase"
           >
-            {ORIGIN_STORY_INTRO.heading}
+            {intro.heading}
           </h2>
 
           {/* Playful Small POP! Sticker Accent */}
@@ -189,7 +193,7 @@ export const OriginStorySection: React.FC = () => {
             className="hidden md:block absolute -right-24 -top-6 z-20"
           >
             <ComicSoundEffect
-              word="POP!"
+              word={intro.stickerText || 'POP!'}
               variant="starburst"
               burstFill="#FFC72C"
               innerFill="#FFF3E0"
@@ -228,7 +232,7 @@ export const OriginStorySection: React.FC = () => {
           ref={copyRef}
           className="m-0 mt-3 sm:mt-4 max-w-[36rem] font-jakarta text-sm sm:text-base lg:text-[clamp(1.0625rem,1.35vw,1.25rem)] font-bold leading-relaxed text-cocoa-brown/80"
         >
-          {ORIGIN_STORY_INTRO.description}
+          {intro.description}
         </p>
       </div>
 

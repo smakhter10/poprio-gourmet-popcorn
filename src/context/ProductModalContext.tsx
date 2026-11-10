@@ -6,6 +6,7 @@ import React, {
   useCallback,
 } from 'react';
 import { getProductDetailById } from '../data/products';
+import { usePoprioContent } from './PoprioContentContext';
 import { ProductModal } from '../components/product-modal/ProductModal';
 
 interface ProductModalContextValue {
@@ -28,6 +29,7 @@ export const ProductModalProvider: React.FC<{ children: React.ReactNode }> = ({
     null
   );
   const lastTriggerElRef = useRef<HTMLElement | null>(null);
+  const { getProductById } = usePoprioContent();
 
   const openProductModal = useCallback(
     (productId: string, triggerElement?: HTMLElement | null) => {
@@ -51,7 +53,9 @@ export const ProductModalProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
-  const selectedProduct = getProductDetailById(selectedProductId);
+  const selectedProduct =
+    getProductById(selectedProductId) ??
+    getProductDetailById(selectedProductId);
 
   return (
     <ProductModalContext.Provider

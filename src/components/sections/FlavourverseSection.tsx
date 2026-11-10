@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { FLAVOURVERSE_BENTO_CARDS } from '../../data/products';
 import { FlavourBentoCard } from './FlavourBentoCard';
+import { usePoprioContent } from '../../context/PoprioContentContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -181,10 +182,13 @@ export const FlavourverseSection: React.FC = () => {
   const popStickerRef = useRef<HTMLDivElement>(null);
   const crunchStickerRef = useRef<HTMLDivElement>(null);
 
+  const { flavourverse } = usePoprioContent();
+  const cards = flavourverse?.cards?.length ? flavourverse.cards : FLAVOURVERSE_BENTO_CARDS;
+
   // Extract canonical card configs by row
-  const row1Cards = FLAVOURVERSE_BENTO_CARDS.filter((c) => c.row === 1);
-  const row2Cards = FLAVOURVERSE_BENTO_CARDS.filter((c) => c.row === 2);
-  const row3Cards = FLAVOURVERSE_BENTO_CARDS.filter((c) => c.row === 3);
+  const row1Cards = cards.filter((c) => c.row === 1);
+  const row2Cards = cards.filter((c) => c.row === 2);
+  const row3Cards = cards.filter((c) => c.row === 3);
 
   useEffect(() => {
     const sectionEl = sectionRef.current;
@@ -393,7 +397,7 @@ export const FlavourverseSection: React.FC = () => {
             ref={eyebrowRef}
             className="m-0 font-jakarta text-[0.875rem] font-extrabold tracking-[0.16em] text-red-orange uppercase"
           >
-            WELCOME TO THE FLAVOURVERSE
+            {flavourverse?.eyebrow || 'WELCOME TO THE FLAVOURVERSE'}
           </p>
 
           {/* Main Heading */}
@@ -402,7 +406,7 @@ export const FlavourverseSection: React.FC = () => {
             ref={titleRef}
             className="m-0 mt-3 font-hero text-3xl sm:text-4xl lg:text-[clamp(2.75rem,4.6vw,4.25rem)] leading-tight lg:leading-[1.02] tracking-[-0.015em] text-cocoa-brown uppercase"
           >
-            PICK YOUR POP!
+            {flavourverse?.title || 'PICK YOUR POP!'}
           </h2>
 
           {/* Supporting Text */}
@@ -410,7 +414,7 @@ export const FlavourverseSection: React.FC = () => {
             ref={descriptionRef}
             className="m-0 mt-2 sm:mt-3.5 font-jakarta text-sm sm:text-base lg:text-[clamp(1.0625rem,1.35vw,1.25rem)] font-bold leading-relaxed text-cocoa-brown/80"
           >
-            Five bold flavours. A whole lot of personality.
+            {flavourverse?.subtitle || 'Five bold flavours. A whole lot of personality.'}
           </p>
         </div>
 

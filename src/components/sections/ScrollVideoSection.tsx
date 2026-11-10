@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { VideoPlaceholder } from './VideoPlaceholder';
 import { getAssetUrl } from '../../lib/assets';
+import { usePoprioContent } from '../../context/PoprioContentContext';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -22,10 +23,15 @@ export const DEFAULT_POPRIO_TRAILER_MOBILE_SRC =
   getAssetUrl('/assets/videos/POPRIO-The-Art-of-The-Pop-15s-Trailer-1080x1920-Mobile.mp4');
 
 export const ScrollVideoSection: React.FC<ScrollVideoSectionProps> = ({
-  videoSrc = DEFAULT_POPRIO_TRAILER_SRC,
-  videoSrcMobile = DEFAULT_POPRIO_TRAILER_MOBILE_SRC,
+  videoSrc,
+  videoSrcMobile,
   posterSrc,
 }) => {
+  const { trailer } = usePoprioContent();
+  const effectiveVideoSrc = videoSrc || trailer?.videoSrc || DEFAULT_POPRIO_TRAILER_SRC;
+  const effectiveVideoSrcMobile = videoSrcMobile || trailer?.videoSrcMobile || DEFAULT_POPRIO_TRAILER_MOBILE_SRC;
+  const effectivePosterSrc = posterSrc || trailer?.posterSrc;
+
   const sectionRef = useRef<HTMLElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const videoPanelRef = useRef<HTMLDivElement>(null);
@@ -157,9 +163,9 @@ export const ScrollVideoSection: React.FC<ScrollVideoSectionProps> = ({
           }}
         >
           <VideoPlaceholder
-            videoSrc={videoSrc}
-            videoSrcMobile={videoSrcMobile}
-            posterSrc={posterSrc}
+            videoSrc={effectiveVideoSrc}
+            videoSrcMobile={effectiveVideoSrcMobile}
+            posterSrc={effectivePosterSrc}
           />
         </div>
       </div>

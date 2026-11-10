@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { getWhatsAppOrderUrl, WHATSAPP_NUMBER } from '../../config/site';
+import { usePoprioContent } from '../../context/PoprioContentContext';
 
 function WhatsAppComicIcon({ isScrolled }: { isScrolled: boolean }) {
   return (
@@ -23,7 +24,8 @@ interface WhatsAppButtonProps {
 export const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
   isScrolled,
 }) => {
-  const whatsappUrl = getWhatsAppOrderUrl(WHATSAPP_NUMBER);
+  const { meta } = usePoprioContent();
+  const whatsappUrl = getWhatsAppOrderUrl(meta?.whatsappNumber || WHATSAPP_NUMBER);
   const [showUnconfiguredNotice, setShowUnconfiguredNotice] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 

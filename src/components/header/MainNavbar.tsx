@@ -4,6 +4,7 @@ import { NavItemConfig, SITE_CONFIG } from '../../config/site';
 import { NavLinks } from './NavLinks';
 import { WhatsAppButton } from './WhatsAppButton';
 import { MobileMenu } from './MobileMenu';
+import { usePoprioContent } from '../../context/PoprioContentContext';
 
 interface MainNavbarProps {
   navbarRef: React.RefObject<HTMLDivElement | null>;
@@ -20,8 +21,12 @@ export const MainNavbar: React.FC<MainNavbarProps> = ({
   onSelectNav,
   isScrolled,
 }) => {
+  const { meta } = usePoprioContent();
   const [logoLoadError, setLogoLoadError] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const logoSrc = meta?.logo?.src || SITE_CONFIG.logo.src;
+  const logoAlt = meta?.logo?.alt || SITE_CONFIG.logo.alt;
 
   return (
     <>
@@ -52,10 +57,10 @@ export const MainNavbar: React.FC<MainNavbarProps> = ({
               {!logoLoadError ? (
                 <img
                   ref={logoImgRef}
-                  src={SITE_CONFIG.logo.src}
-                  alt={SITE_CONFIG.logo.alt}
-                  width={SITE_CONFIG.logo.width}
-                  height={SITE_CONFIG.logo.height}
+                  src={logoSrc}
+                  alt={logoAlt}
+                  width={meta?.logo?.width || SITE_CONFIG.logo.width}
+                  height={meta?.logo?.height || SITE_CONFIG.logo.height}
                   onError={() => setLogoLoadError(true)}
                   className="h-[2.5rem] sm:h-[3.25rem] w-auto object-contain select-none origin-left"
                 />
