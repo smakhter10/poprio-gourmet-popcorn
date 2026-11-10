@@ -1,0 +1,345 @@
+@import "tailwindcss";
+
+:root {
+  /* ==========================================================================
+     POPRIO Brand Colour Palette
+     ========================================================================== */
+  --color-butter-yellow: #FFC72C;
+  --color-cocoa-brown: #4B1F0F;
+  --color-red-orange: #E0351B;
+  --color-warm-cream: #FFF3E0;
+  --color-warm-purple: #7A3DA6;
+  --color-accent-pink: #F5A7BE;
+  --color-caramel: #D78A24;
+
+  /* Supporting Flavour Tints (Derived from Cocoa & Cream) */
+  --color-light-cocoa: #F3DEC8;
+  --color-chocolate-rich: #6B2D16;
+
+  /* ==========================================================================
+     Typography Tokens
+     ========================================================================== */
+  --font-display: "Titan One", cursive, sans-serif;
+  --font-hero: "Archivo Black", sans-serif;
+  --font-comic: "Bangers", cursive, sans-serif;
+  --font-subtitle: "Space Grotesk", sans-serif;
+  --font-jakarta: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Nunito Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* ==========================================================================
+     Borders & Outlines (Primary Outline: Cocoa Brown #4B1F0F)
+     ========================================================================== */
+  --border-width-card: 0.1875rem;   /* 3px */
+  --border-width-thick: 0.25rem;    /* 4px */
+  --border-color-primary: var(--color-cocoa-brown);
+
+  /* ==========================================================================
+     Border Radii
+     ========================================================================== */
+  --radius-sm: 0.5rem;              /* 8px */
+  --radius-card: 0.75rem;           /* 12px */
+  --radius-button: 0.875rem;        /* 14px */
+  --radius-navbar-scrolled: 1.125rem; /* 18px (within 1rem–1.25rem) */
+  --radius-mega: 1.25rem;           /* 20px */
+
+  /* ==========================================================================
+     Comic-Style Hard Shadows (Zero Blur, Solid Cocoa Brown)
+     ========================================================================== */
+  --shadow-hard-xs: 0.125rem 0.125rem 0 var(--color-cocoa-brown);
+  --shadow-hard-sm: 0.1875rem 0.1875rem 0 var(--color-cocoa-brown);
+  --shadow-hard: 0.25rem 0.25rem 0 var(--color-cocoa-brown);
+  --shadow-hard-md: 0.3125rem 0.3125rem 0 var(--color-cocoa-brown);
+  --shadow-hard-lg: 0.375rem 0.375rem 0 var(--color-cocoa-brown);
+  --shadow-hard-xl: 0.5rem 0.5rem 0 var(--color-cocoa-brown);
+
+  /* ==========================================================================
+     Animation Durations & Easing
+     ========================================================================== */
+  --duration-hover: 200ms;
+  --duration-menu: 240ms;
+  --duration-navbar-shrink: 550ms;
+  --ease-comic: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snappy: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ==========================================================================
+     Layout & Navbar Dimensions
+     ========================================================================== */
+  --max-content-width: 84rem;       /* 1344px */
+  --navbar-scrolled-max-width: 80rem; /* 1280px */
+  --navbar-scrolled-width: 90%;     /* 88%–92% viewport target */
+  --parade-height: 2.75rem;         /* 44px */
+  --navbar-height-initial: 5.25rem; /* 84px */
+  --navbar-height-scrolled: 4.125rem; /* 66px */
+}
+
+@theme {
+  --color-foreground: var(--color-cocoa-brown);
+  --color-butter-yellow: var(--color-butter-yellow);
+  --color-cocoa-brown: var(--color-cocoa-brown);
+  --color-red-orange: var(--color-red-orange);
+  --color-warm-cream: var(--color-warm-cream);
+  --color-warm-purple: var(--color-warm-purple);
+  --color-accent-pink: var(--color-accent-pink);
+  --color-caramel: var(--color-caramel);
+  --color-light-cocoa: var(--color-light-cocoa);
+  --color-chocolate-rich: var(--color-chocolate-rich);
+
+  --font-display: var(--font-display);
+  --font-hero: var(--font-hero);
+  --font-comic: var(--font-comic);
+  --font-subtitle: var(--font-subtitle);
+  --font-jakarta: var(--font-jakarta);
+  --font-body: var(--font-body);
+
+  --shadow-comic-xs: var(--shadow-hard-xs);
+  --shadow-comic-sm: var(--shadow-hard-sm);
+  --shadow-comic: var(--shadow-hard);
+  --shadow-comic-md: var(--shadow-hard-md);
+  --shadow-comic-lg: var(--shadow-hard-lg);
+  --shadow-comic-xl: var(--shadow-hard-xl);
+}
+
+/* ==========================================================================
+   Base Document & Accessibility Rules
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: var(--color-butter-yellow);
+  color: var(--color-cocoa-brown);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background-color: var(--color-butter-yellow);
+  color: var(--color-cocoa-brown);
+  overflow-x: hidden;
+}
+
+/* Accessible Focus Ring in POPRIO Brand Palette */
+:focus-visible {
+  outline: 0.1875rem solid var(--color-warm-purple);
+  outline-offset: 0.1875rem;
+}
+
+/* ==========================================================================
+   Reusable Comic Component Classes
+   ========================================================================== */
+.comic-border-card {
+  border: var(--border-width-card) solid var(--color-cocoa-brown);
+}
+
+.comic-border-thick {
+  border: var(--border-width-thick) solid var(--color-cocoa-brown);
+}
+
+.comic-heading-white {
+  color: #FFFFFF;
+  -webkit-text-stroke: 0.15rem #180904;
+  paint-order: stroke fill;
+  text-shadow: 0.125rem 0.125rem 0 #180904;
+}
+
+@media (min-width: 640px) {
+  .comic-heading-white {
+    -webkit-text-stroke: 0.22rem #180904;
+    text-shadow: 0.15rem 0.15rem 0 #180904;
+  }
+}
+
+@media (min-width: 1024px) {
+  .comic-heading-white {
+    -webkit-text-stroke: 0.28rem #180904;
+    text-shadow: 0.1875rem 0.1875rem 0 #180904;
+  }
+}
+
+/* Navigation link hover physics */
+.poprio-nav-item {
+  font-family: var(--font-display);
+  color: var(--color-cocoa-brown);
+  letter-spacing: 0.03em;
+  transition: transform var(--duration-hover) var(--ease-comic),
+              color var(--duration-hover) var(--ease-comic);
+}
+
+.poprio-nav-item:hover,
+.poprio-nav-item:focus-visible,
+.poprio-nav-item[aria-expanded="true"] {
+  transform: translateY(-0.125rem);
+}
+
+.poprio-nav-highlight {
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform var(--duration-hover) var(--ease-comic),
+              opacity var(--duration-hover) var(--ease-comic);
+  opacity: 0;
+}
+
+.poprio-nav-item:hover .poprio-nav-highlight,
+.poprio-nav-item:focus-visible .poprio-nav-highlight,
+.poprio-nav-item[aria-expanded="true"] .poprio-nav-highlight {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+/* WhatsApp Comic CTA Button physics */
+.poprio-whatsapp-btn {
+  background-color: var(--color-red-orange);
+  color: var(--color-warm-cream);
+  font-family: var(--font-display);
+  border: var(--border-width-card) solid var(--color-cocoa-brown);
+  border-radius: var(--radius-button);
+  box-shadow: var(--shadow-hard);
+  transition: transform var(--duration-hover) var(--ease-comic),
+              box-shadow var(--duration-hover) var(--ease-comic),
+              padding 350ms var(--ease-comic),
+              background-color var(--duration-hover) var(--ease-comic);
+}
+
+.poprio-whatsapp-btn:hover,
+.poprio-whatsapp-btn:focus-visible {
+  transform: translate(0.125rem, 0.125rem);
+  box-shadow: var(--shadow-hard-xs);
+}
+
+.poprio-whatsapp-btn:active {
+  transform: translate(0.25rem, 0.25rem);
+  box-shadow: 0 0 0 var(--color-cocoa-brown);
+}
+
+/* Comic-Book Social Media Badge Buttons */
+.poprio-social-btn {
+  border: 0.15625rem solid var(--color-cocoa-brown);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow-hard-xs);
+  transition: transform var(--duration-hover) var(--ease-comic),
+              box-shadow var(--duration-hover) var(--ease-comic);
+}
+
+.poprio-social-btn:hover,
+.poprio-social-btn:focus-visible {
+  transform: translate(-0.0625rem, -0.125rem) rotate(-5deg);
+  box-shadow: var(--shadow-hard-sm);
+}
+
+.poprio-social-btn:active {
+  transform: translate(0.125rem, 0.125rem) rotate(0deg);
+  box-shadow: 0 0 0 var(--color-cocoa-brown);
+}
+
+/* Product Mega Menu Card physics */
+.poprio-product-card {
+  border: var(--border-width-card) solid var(--color-cocoa-brown);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-hard);
+  transition: transform var(--duration-hover) var(--ease-comic),
+              box-shadow var(--duration-hover) var(--ease-comic);
+}
+
+.poprio-product-card:hover,
+.poprio-product-card:focus-visible {
+  transform: translate(-0.0625rem, -0.1875rem);
+  box-shadow: var(--shadow-hard-lg);
+}
+
+.poprio-product-card .product-card-illustration {
+  transition: transform var(--duration-hover) var(--ease-comic);
+}
+
+.poprio-product-card:hover .product-card-illustration,
+.poprio-product-card:focus-visible .product-card-illustration {
+  transform: rotate(-5deg) scale(1.05);
+}
+
+.poprio-product-card .product-card-arrow {
+  transition: transform var(--duration-hover) var(--ease-comic);
+}
+
+.poprio-product-card:hover .product-card-arrow,
+.poprio-product-card:focus-visible .product-card-arrow {
+  transform: translateX(0.25rem);
+}
+
+/* ==========================================================================
+   POPRIO Comic-Book Branded Scrollbar
+   ========================================================================== */
+/* Standard modern syntax (Firefox / modern browsers) */
+html,
+body,
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-cocoa-brown) var(--color-warm-cream);
+}
+
+/* WebKit (Chrome, Safari, Edge, Opera) */
+::-webkit-scrollbar {
+  width: 0.75rem; /* 12px */
+  height: 0.75rem;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--color-warm-cream);
+  border-left: 0.125rem solid var(--color-cocoa-brown);
+}
+
+::-webkit-scrollbar-track:horizontal {
+  border-left: none;
+  border-top: 0.125rem solid var(--color-cocoa-brown);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-butter-yellow);
+  border: 0.125rem solid var(--color-cocoa-brown);
+  border-radius: 0.5rem;
+  box-shadow: inset 0.0625rem 0.0625rem 0 rgba(255, 255, 255, 0.45);
+  transition: background-color var(--duration-hover) var(--ease-comic);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-red-orange);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: #B8220C;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: var(--color-warm-cream);
+  border-left: 0.125rem solid var(--color-cocoa-brown);
+  border-top: 0.125rem solid var(--color-cocoa-brown);
+}
+
+/* Reduced Motion Compliance */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .poprio-nav-item:hover,
+  .poprio-nav-item:focus-visible,
+  .poprio-whatsapp-btn:hover,
+  .poprio-whatsapp-btn:focus-visible,
+  .poprio-product-card:hover,
+  .poprio-product-card:focus-visible,
+  .poprio-product-card:hover .product-card-illustration,
+  .poprio-product-card:hover .product-card-arrow {
+    transform: none !important;
+  }
+}
