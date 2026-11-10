@@ -136,3 +136,4 @@ export interface PoprioContentSchema {
   contact: PoprioContactContent;
   footer: PoprioFooterContent;
 }
+

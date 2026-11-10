@@ -235,3 +235,4 @@ class Poprio_Revision_Manager {
 		return self::publish( $rev['data'], $summary, $author_id );
 	}
 }
+

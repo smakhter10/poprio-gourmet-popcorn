@@ -27,3 +27,4 @@ try {
   console.error('Failed to create ZIP package:', err);
   process.exit(1);
 }
+

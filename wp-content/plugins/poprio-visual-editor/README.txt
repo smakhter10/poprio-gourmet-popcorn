@@ -32,3 +32,4 @@ It manages canonical content schemas, draft revisions, live publishing, and REST
 
 = 1.0.0 =
 * Initial Phase 3 release: Content Schema, Revision Manager, and REST API controllers.
+

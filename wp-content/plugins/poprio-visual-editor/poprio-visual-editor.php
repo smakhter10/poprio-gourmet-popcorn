@@ -66,3 +66,4 @@ function poprio_ve_get_content(): array {
 	}
 	return [];
 }
+

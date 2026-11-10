@@ -259,3 +259,4 @@ if ( $tests_passed === $tests_total ) {
     echo "STATUS: SOME TESTS FAILED.\n";
     exit( 1 );
 }
+
