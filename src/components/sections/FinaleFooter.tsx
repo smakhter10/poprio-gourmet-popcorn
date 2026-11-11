@@ -11,6 +11,7 @@ import {
 } from '../../config/site';
 import { ORIGIN_STORY_ASSETS } from '../../data/originStoryData';
 import { usePoprioContent } from '../../context/PoprioContentContext';
+import { PoprioEditableElement } from '../editor/PoprioEditableElement';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -235,32 +236,38 @@ export const FinaleFooter: React.FC<FinaleFooterProps> = ({ onNavigate }) => {
           ===================================================================== */}
       <div className="relative z-20 w-full max-w-[84rem] mx-auto pt-24 lg:pt-28 px-6 lg:px-10 flex flex-col items-center text-center">
         {/* 1. Small Upper Brand Statement */}
-        <p
-          ref={statementRef}
-          className="m-0 font-jakarta text-[0.625rem] sm:text-xs md:text-[0.875rem] font-extrabold tracking-[0.11em] md:tracking-[0.18em] text-butter-yellow uppercase"
-        >
-          {footer?.statement || 'SMALL BATCHES ✦ BIG CRAVINGS ✦ FLAVOUR THAT POPS'}
-        </p>
+        <PoprioEditableElement elementId="footer.statement" type="text" label="Footer Statement">
+          <p
+            ref={statementRef}
+            className="m-0 font-jakarta text-[0.625rem] sm:text-xs md:text-[0.875rem] font-extrabold tracking-[0.11em] md:tracking-[0.18em] text-butter-yellow uppercase"
+          >
+            {footer?.statement || 'SMALL BATCHES ✦ BIG CRAVINGS ✦ FLAVOUR THAT POPS'}
+          </p>
+        </PoprioEditableElement>
 
         {/* 2. Large Central Headline */}
-        <h2
-          id="finale-cta-heading"
-          ref={headlineRef}
-          className="m-0 mt-3 sm:mt-5 font-hero text-[2.375rem] sm:text-5xl lg:text-[clamp(3.5rem,7.6vw,8rem)] leading-[1.05] lg:leading-[0.95] tracking-[-0.02em] text-warm-cream uppercase"
-          style={{
-            textShadow: '0.25rem 0.25rem 0 #E0351B, 0.45rem 0.45rem 0 #260E06',
-          }}
-        >
-          {footer?.headline || 'READY TO POP IN?'}
-        </h2>
+        <PoprioEditableElement elementId="footer.headline" type="text" label="Footer Headline">
+          <h2
+            id="finale-cta-heading"
+            ref={headlineRef}
+            className="m-0 mt-3 sm:mt-5 font-hero text-[2.375rem] sm:text-5xl lg:text-[clamp(3.5rem,7.6vw,8rem)] leading-[1.05] lg:leading-[0.95] tracking-[-0.02em] text-warm-cream uppercase"
+            style={{
+              textShadow: '0.25rem 0.25rem 0 #E0351B, 0.45rem 0.45rem 0 #260E06',
+            }}
+          >
+            {footer?.headline || 'READY TO POP IN?'}
+          </h2>
+        </PoprioEditableElement>
 
         {/* 3. Supporting Copy */}
-        <p
-          ref={copyRef}
-          className="m-0 mt-3 sm:mt-6 max-w-[40rem] font-jakarta text-sm sm:text-base lg:text-[clamp(1.125rem,1.4vw,1.375rem)] font-bold leading-relaxed text-warm-cream/90"
-        >
-          {footer?.copy || 'Your next popcorn obsession is only a WhatsApp message away.'}
-        </p>
+        <PoprioEditableElement elementId="footer.copy" type="text" label="Footer Copy">
+          <p
+            ref={copyRef}
+            className="m-0 mt-3 sm:mt-6 max-w-[40rem] font-jakarta text-sm sm:text-base lg:text-[clamp(1.125rem,1.4vw,1.375rem)] font-bold leading-relaxed text-warm-cream/90"
+          >
+            {footer?.copy || 'Your next popcorn obsession is only a WhatsApp message away.'}
+          </p>
+        </PoprioEditableElement>
 
         {/* 4. Two Prominent CTA Buttons */}
         <div
@@ -268,42 +275,46 @@ export const FinaleFooter: React.FC<FinaleFooterProps> = ({ onNavigate }) => {
           className="mt-6 sm:mt-9 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 w-full max-w-xs sm:max-w-none"
         >
           {/* Button 1 — Primary: CHAT ON WHATSAPP */}
-          {whatsappUrl ? (
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-butter-yellow text-cocoa-brown border-[0.22rem] border-solid border-[#260E06] font-jakarta text-sm sm:text-[1rem] font-extrabold tracking-[0.06em] uppercase cursor-pointer select-none shadow-[0.3125rem_0.3125rem_0_#E0351B] transition-all duration-200 hover:-translate-y-1 hover:-rotate-1 hover:shadow-[0.45rem_0.45rem_0_#E0351B] active:translate-y-0.5 active:rotate-0 active:shadow-[0.15rem_0.15rem_0_#E0351B]"
-            >
-              <WhatsAppFinaleIcon />
-              <span>{footer?.ctaWhatsAppText || 'CHAT ON WHATSAPP'}</span>
-            </a>
-          ) : (
-            <button
-              type="button"
-              disabled
-              aria-disabled="true"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-butter-yellow text-cocoa-brown border-[0.22rem] border-solid border-[#260E06] font-jakarta text-sm sm:text-[1rem] font-extrabold tracking-[0.06em] uppercase opacity-90 cursor-not-allowed select-none shadow-[0.3125rem_0.3125rem_0_#E0351B]"
-            >
-              <WhatsAppFinaleIcon />
-              <span>{footer?.ctaWhatsAppText || 'CHAT ON WHATSAPP'}</span>
-            </button>
-          )}
+          <PoprioEditableElement elementId="footer.ctaWhatsApp" type="button" label="WhatsApp CTA Button">
+            {whatsappUrl ? (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-butter-yellow text-cocoa-brown border-[0.22rem] border-solid border-[#260E06] font-jakarta text-sm sm:text-[1rem] font-extrabold tracking-[0.06em] uppercase cursor-pointer select-none shadow-[0.3125rem_0.3125rem_0_#E0351B] transition-all duration-200 hover:-translate-y-1 hover:-rotate-1 hover:shadow-[0.45rem_0.45rem_0_#E0351B] active:translate-y-0.5 active:rotate-0 active:shadow-[0.15rem_0.15rem_0_#E0351B]"
+              >
+                <WhatsAppFinaleIcon />
+                <span>{footer?.ctaWhatsAppText || 'CHAT ON WHATSAPP'}</span>
+              </a>
+            ) : (
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-butter-yellow text-cocoa-brown border-[0.22rem] border-solid border-[#260E06] font-jakarta text-sm sm:text-[1rem] font-extrabold tracking-[0.06em] uppercase opacity-90 cursor-not-allowed select-none shadow-[0.3125rem_0.3125rem_0_#E0351B]"
+              >
+                <WhatsAppFinaleIcon />
+                <span>{footer?.ctaWhatsAppText || 'CHAT ON WHATSAPP'}</span>
+              </button>
+            )}
+          </PoprioEditableElement>
 
           {/* Button 2 — Secondary: VIEW FLAVOURS */}
-          <button
-            type="button"
-            onClick={() => {
-              if (onNavigate) {
-                onNavigate('products');
-              } else {
-                scrollToSection('flavourverse');
-              }
-            }}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-warm-cream text-cocoa-brown border-[0.22rem] border-solid border-[#260E06] font-jakarta text-sm sm:text-[1rem] font-extrabold tracking-[0.06em] uppercase cursor-pointer select-none shadow-[0.3125rem_0.3125rem_0_#260E06] transition-all duration-200 hover:-translate-y-1 hover:rotate-1 hover:shadow-[0.45rem_0.45rem_0_#260E06] active:translate-y-0.5 active:rotate-0 active:shadow-[0.15rem_0.15rem_0_#260E06]"
-          >
-            <span>{footer?.ctaFlavoursText || 'VIEW FLAVOURS'}</span>
-          </button>
+          <PoprioEditableElement elementId="footer.ctaFlavours" type="button" label="View Flavours CTA Button">
+            <button
+              type="button"
+              onClick={() => {
+                if (onNavigate) {
+                  onNavigate('products');
+                } else {
+                  scrollToSection('flavourverse');
+                }
+              }}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-warm-cream text-cocoa-brown border-[0.22rem] border-solid border-[#260E06] font-jakarta text-sm sm:text-[1rem] font-extrabold tracking-[0.06em] uppercase cursor-pointer select-none shadow-[0.3125rem_0.3125rem_0_#260E06] transition-all duration-200 hover:-translate-y-1 hover:rotate-1 hover:shadow-[0.45rem_0.45rem_0_#260E06] active:translate-y-0.5 active:rotate-0 active:shadow-[0.15rem_0.15rem_0_#260E06]"
+            >
+              <span>{footer?.ctaFlavoursText || 'VIEW FLAVOURS'}</span>
+            </button>
+          </PoprioEditableElement>
         </div>
 
         {/* 5. Utility Navigation Links */}

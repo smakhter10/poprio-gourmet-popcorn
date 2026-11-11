@@ -70,6 +70,11 @@ add_action( 'wp_enqueue_scripts', 'poprio_enqueue_fonts', 5 );
 function poprio_enqueue_frontend_assets() {
 	$theme_uri = get_template_directory_uri();
 
+	// Enqueue WordPress Media Library scripts and styles for logged-in editors
+	if ( is_user_logged_in() && current_user_can( 'edit_pages' ) ) {
+		wp_enqueue_media();
+	}
+
 	// In development mode with local Vite server running
 	if ( Poprio_Asset_Manifest::is_dev_server_active() ) {
 		// Vite client for HMR

@@ -9,6 +9,7 @@ import {
 } from '../../data/heroPackages';
 import { useProductModal } from '../../context/ProductModalContext';
 import { usePoprioContent } from '../../context/PoprioContentContext';
+import { PoprioEditableElement } from '../editor/PoprioEditableElement';
 
 export const HeroPackageShowcase: React.FC = () => {
   const { hero } = usePoprioContent();
@@ -420,12 +421,19 @@ export const HeroPackageShowcase: React.FC = () => {
                 }}
               >
                 <span className="w-full aspect-[3/4] flex items-center justify-center">
-                  <img
-                    src={pkg.imagePath}
-                    alt={pkg.altText}
-                    draggable={false}
-                    className="w-full h-full object-contain drop-shadow-[0_12px_0_rgba(75,31,15,0.28)] select-none pointer-events-none"
-                  />
+                  <PoprioEditableElement
+                    elementId={`hero.package.${index}`}
+                    type="image"
+                    label={`Pouch: ${pkg.flavourName}`}
+                    className="w-full h-full flex items-center justify-center"
+                  >
+                    <img
+                      src={pkg.imagePath}
+                      alt={pkg.altText}
+                      draggable={false}
+                      className="w-full h-full object-contain drop-shadow-[0_12px_0_rgba(75,31,15,0.28)] select-none pointer-events-none"
+                    />
+                  </PoprioEditableElement>
                 </span>
               </button>
             );
@@ -515,16 +523,28 @@ export const HeroPackageShowcase: React.FC = () => {
                   pointerEvents: Math.abs(diff) <= 1 ? 'auto' : 'none',
                 }}
               >
-                <img
-                  src={pkg.imagePath}
-                  alt={isCenter ? pkg.altText : ''}
-                  draggable={false}
-                  className={`w-full h-full object-contain select-none pointer-events-none ${
-                    isCenter
-                      ? 'drop-shadow-[0_12px_0_rgba(75,31,15,0.28)]'
-                      : 'drop-shadow-[0_6px_0_rgba(75,31,15,0.2)]'
-                  }`}
-                />
+                {isCenter ? (
+                  <PoprioEditableElement
+                    elementId={`hero.package.${idx}`}
+                    type="image"
+                    label={`Pouch: ${pkg.flavourName}`}
+                    className="w-full h-full flex items-center justify-center"
+                  >
+                    <img
+                      src={pkg.imagePath}
+                      alt={pkg.altText}
+                      draggable={false}
+                      className="w-full h-full object-contain drop-shadow-[0_12px_0_rgba(75,31,15,0.28)] select-none pointer-events-none"
+                    />
+                  </PoprioEditableElement>
+                ) : (
+                  <img
+                    src={pkg.imagePath}
+                    alt=""
+                    draggable={false}
+                    className="w-full h-full object-contain select-none pointer-events-none drop-shadow-[0_6px_0_rgba(75,31,15,0.2)]"
+                  />
+                )}
               </button>
             );
           })}

@@ -4,6 +4,7 @@ import { RotatingText, RotatingWordItem } from './RotatingText';
 import { HeroPackageShowcase } from './HeroPackageShowcase';
 import { HeroFloatingCorns } from './HeroFloatingCorns';
 import { usePoprioContent } from '../../context/PoprioContentContext';
+import { PoprioEditableElement } from '../editor/PoprioEditableElement';
 
 /**
  * Line 1 rotating words in natural Title Case:
@@ -128,12 +129,14 @@ export const HeroSection: React.FC = () => {
             {hero?.eyebrow1 || 'Not Your Ordinary'} Popcorn, Snack, Craving, or Treat.
           </span>
 
-          <span
-            aria-hidden="true"
-            className={`comic-heading-white font-hero ${UNIFORM_HERO_TEXT_SIZE} leading-[1.15] tracking-[0.01em] whitespace-nowrap block`}
-          >
-            {hero?.eyebrow1 || 'Not Your Ordinary'}
-          </span>
+          <PoprioEditableElement elementId="hero.eyebrow1" type="text" label="Hero Eyebrow 1">
+            <span
+              aria-hidden="true"
+              className={`comic-heading-white font-hero ${UNIFORM_HERO_TEXT_SIZE} leading-[1.15] tracking-[0.01em] whitespace-nowrap block`}
+            >
+              {hero?.eyebrow1 || 'Not Your Ordinary'}
+            </span>
+          </PoprioEditableElement>
 
           <RotatingText
             items={primaryWords}
@@ -156,12 +159,14 @@ export const HeroSection: React.FC = () => {
             Choco Hazelnut.
           </span>
 
-          <span
-            aria-hidden="true"
-            className={`comic-heading-white font-hero ${UNIFORM_HERO_TEXT_SIZE} leading-[1.15] tracking-[0.01em] whitespace-nowrap block`}
-          >
-            {hero?.eyebrow2 || 'Your Next Obsession?'}
-          </span>
+          <PoprioEditableElement elementId="hero.eyebrow2" type="text" label="Hero Eyebrow 2">
+            <span
+              aria-hidden="true"
+              className={`comic-heading-white font-hero ${UNIFORM_HERO_TEXT_SIZE} leading-[1.15] tracking-[0.01em] whitespace-nowrap block`}
+            >
+              {hero?.eyebrow2 || 'Your Next Obsession?'}
+            </span>
+          </PoprioEditableElement>
 
           <RotatingText
             items={flavourWords}
@@ -176,25 +181,29 @@ export const HeroSection: React.FC = () => {
         {/* ===================================================================
             HERO SUBTITLE (Space Grotesk)
             =================================================================== */}
-        <p className="mt-1 max-w-[38rem] font-subtitle text-xs sm:text-base lg:text-[clamp(1.0625rem,1.35vw,1.25rem)] font-bold leading-relaxed text-cocoa-brown tracking-[-0.01em] px-3">
-          {hero?.subtitle || 'Handcrafted in small batches with bold, crunchy flavours that turn every handful into a comic-sized flavour explosion.'}
-        </p>
+        <PoprioEditableElement elementId="hero.subtitle" type="text" label="Hero Subtitle">
+          <p className="mt-1 max-w-[38rem] font-subtitle text-xs sm:text-base lg:text-[clamp(1.0625rem,1.35vw,1.25rem)] font-bold leading-relaxed text-cocoa-brown tracking-[-0.01em] px-3">
+            {hero?.subtitle || 'Handcrafted in small batches with bold, crunchy flavours that turn every handful into a comic-sized flavour explosion.'}
+          </p>
+        </PoprioEditableElement>
 
         {/* ===================================================================
             SIMPLE, MINIMAL COMPACT ROUNDED CTA BUTTON
             =================================================================== */}
         <div className="mt-1.5 sm:mt-3">
-          <button
-            type="button"
-            onClick={handleExploreClick}
-            className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-7 sm:py-3.5 rounded-full bg-cocoa-brown text-warm-cream font-subtitle text-sm sm:text-[1rem] font-bold tracking-tight cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap shrink-0"
-          >
-            <span>{hero?.ctaText || 'Explore Flavours'}</span>
-            <ArrowRight
-              aria-hidden="true"
-              className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] transition-transform duration-200 group-hover:translate-x-1"
-            />
-          </button>
+          <PoprioEditableElement elementId="hero.cta" type="button" label="Explore CTA Button">
+            <button
+              type="button"
+              onClick={handleExploreClick}
+              className="group inline-flex items-center justify-center gap-2 px-5 py-2.5 sm:px-7 sm:py-3.5 rounded-full bg-cocoa-brown text-warm-cream font-subtitle text-sm sm:text-[1rem] font-bold tracking-tight cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 whitespace-nowrap shrink-0"
+            >
+              <span>{hero?.ctaText || 'Explore Flavours'}</span>
+              <ArrowRight
+                aria-hidden="true"
+                className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] transition-transform duration-200 group-hover:translate-x-1"
+              />
+            </button>
+          </PoprioEditableElement>
         </div>
       </div>
 

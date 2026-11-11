@@ -8,6 +8,7 @@ import {
 import { OrderingStep, OrderingStepData } from './OrderingStep';
 import { getAssetUrl } from '../../lib/assets';
 import { usePoprioContent } from '../../context/PoprioContentContext';
+import { PoprioEditableElement } from '../editor/PoprioEditableElement';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -275,29 +276,35 @@ export const HowToOrderSection: React.FC = () => {
           className="max-w-[52rem] mx-auto text-center"
         >
           {/* A. Small Eyebrow Label */}
-          <p
-            ref={eyebrowRef}
-            className="m-0 font-jakarta text-xs sm:text-[0.875rem] font-extrabold tracking-[0.16em] text-red-orange uppercase"
-          >
-            {howToOrder?.eyebrow || "IT'S EASY AS 1, 2, POP!"}
-          </p>
+          <PoprioEditableElement elementId="howToOrder.eyebrow" type="text" label="How To Order Eyebrow">
+            <p
+              ref={eyebrowRef}
+              className="m-0 font-jakarta text-xs sm:text-[0.875rem] font-extrabold tracking-[0.16em] text-red-orange uppercase"
+            >
+              {howToOrder?.eyebrow || "IT'S EASY AS 1, 2, POP!"}
+            </p>
+          </PoprioEditableElement>
 
           {/* B. Large Heading */}
-          <h2
-            id="how-to-order-heading"
-            ref={titleRef}
-            className="m-0 mt-2 sm:mt-3 font-hero text-xl sm:text-3xl md:text-4xl lg:text-[clamp(2.5rem,4.6vw,4.5rem)] leading-tight lg:leading-[1.02] tracking-[-0.015em] text-cocoa-brown uppercase"
-          >
-            {howToOrder?.title || 'CRAVE IT. CHAT IT. CRUNCH IT.'}
-          </h2>
+          <PoprioEditableElement elementId="howToOrder.title" type="text" label="How To Order Title">
+            <h2
+              id="how-to-order-heading"
+              ref={titleRef}
+              className="m-0 mt-2 sm:mt-3 font-hero text-xl sm:text-3xl md:text-4xl lg:text-[clamp(2.5rem,4.6vw,4.5rem)] leading-tight lg:leading-[1.02] tracking-[-0.015em] text-cocoa-brown uppercase"
+            >
+              {howToOrder?.title || 'CRAVE IT. CHAT IT. CRUNCH IT.'}
+            </h2>
+          </PoprioEditableElement>
 
           {/* C. Short Supporting Description */}
-          <p
-            ref={descriptionRef}
-            className="m-0 mt-1.5 sm:mt-2.5 md:mt-3.5 font-jakarta text-xs sm:text-sm md:text-base lg:text-[clamp(1.0625rem,1.35vw,1.25rem)] font-bold leading-relaxed text-cocoa-brown/85"
-          >
-            {howToOrder?.subtitle || 'Three simple steps to your next popcorn obsession.'}
-          </p>
+          <PoprioEditableElement elementId="howToOrder.subtitle" type="text" label="How To Order Subtitle">
+            <p
+              ref={descriptionRef}
+              className="m-0 mt-1.5 sm:mt-2.5 md:mt-3.5 font-jakarta text-xs sm:text-sm md:text-base lg:text-[clamp(1.0625rem,1.35vw,1.25rem)] font-bold leading-relaxed text-cocoa-brown/85"
+            >
+              {howToOrder?.subtitle || 'Three simple steps to your next popcorn obsession.'}
+            </p>
+          </PoprioEditableElement>
         </div>
 
         {/* ===================================================================
@@ -305,25 +312,27 @@ export const HowToOrderSection: React.FC = () => {
             Sits directly on #FFC72C with zero framing
             =================================================================== */}
         <div className="w-full max-w-[15.5rem] sm:max-w-[18.5rem] md:max-w-[78rem] mx-auto mt-6 sm:mt-8 md:mt-10 lg:mt-12 bg-[#FFC72C] flex items-center justify-center">
-          <video
-            ref={videoElRef}
-            key={activeVideoSrc}
-            src={activeVideoSrc}
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            aria-label="Animated guide showing how to choose a POPRIO flavour, message us on WhatsApp, and enjoy the popcorn."
-            className="block w-full h-auto aspect-[9/16] md:aspect-auto object-contain bg-[#FFC72C] m-0 p-0 border-0 shadow-none rounded-none"
-          >
-            <source
-              src={howToOrder?.videoSrcMobile || HOW_TO_ORDER_MOBILE_VIDEO_SRC}
-              media="(max-width: 768px)"
-              type="video/mp4"
-            />
-            <source src={howToOrder?.videoSrc || HOW_TO_ORDER_VIDEO_SRC} type="video/mp4" />
-          </video>
+          <PoprioEditableElement elementId="howToOrder.video" type="video" label="How To Order Video" className="w-full flex items-center justify-center">
+            <video
+              ref={videoElRef}
+              key={activeVideoSrc}
+              src={activeVideoSrc}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              aria-label="Animated guide showing how to choose a POPRIO flavour, message us on WhatsApp, and enjoy the popcorn."
+              className="block w-full h-auto aspect-[9/16] md:aspect-auto object-contain bg-[#FFC72C] m-0 p-0 border-0 shadow-none rounded-none"
+            >
+              <source
+                src={howToOrder?.videoSrcMobile || HOW_TO_ORDER_MOBILE_VIDEO_SRC}
+                media="(max-width: 768px)"
+                type="video/mp4"
+              />
+              <source src={howToOrder?.videoSrc || HOW_TO_ORDER_VIDEO_SRC} type="video/mp4" />
+            </video>
+          </PoprioEditableElement>
         </div>
 
         {/* ===================================================================
@@ -352,27 +361,29 @@ export const HowToOrderSection: React.FC = () => {
           ref={ctaWrapRef}
           className="mt-6 sm:mt-8 md:mt-10 lg:mt-12 flex flex-col items-center text-center px-3"
         >
-          {whatsappUrl ? (
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2.5 sm:gap-3 md:gap-3.5 px-6 sm:px-7 md:px-9 py-3 sm:py-3.5 md:py-4.5 rounded-[0.75rem] md:rounded-[0.875rem] bg-red-orange text-warm-cream border-[0.16rem] md:border-[0.22rem] border-solid border-cocoa-brown font-display text-sm sm:text-base md:text-[1.1875rem] tracking-[0.04em] uppercase cursor-pointer select-none shadow-[0.2rem_0.2rem_0_#4B1F0F] md:shadow-[0.3125rem_0.3125rem_0_#4B1F0F] transition-all duration-200 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0.4375rem_0.4375rem_0_#4B1F0F] active:translate-y-0.5 active:scale-[0.99] active:shadow-[0.125rem_0.125rem_0_#4B1F0F]"
-            >
-              <WhatsAppOrderIcon className="w-4.5 h-4.5 sm:w-5 sm:h-5 md:w-6 md:h-6 shrink-0 fill-current" />
-              <span>CHAT &amp; ORDER ON WHATSAPP</span>
-            </a>
-          ) : (
-            <button
-              type="button"
-              disabled
-              aria-disabled="true"
-              className="inline-flex items-center justify-center gap-2.5 sm:gap-3 md:gap-3.5 px-6 sm:px-7 md:px-9 py-3 sm:py-3.5 md:py-4.5 rounded-[0.75rem] md:rounded-[0.875rem] bg-red-orange text-warm-cream border-[0.16rem] md:border-[0.22rem] border-solid border-cocoa-brown font-display text-sm sm:text-base md:text-[1.1875rem] tracking-[0.04em] uppercase opacity-90 cursor-not-allowed select-none shadow-[0.2rem_0.2rem_0_#4B1F0F] md:shadow-[0.3125rem_0.3125rem_0_#4B1F0F]"
-            >
-              <WhatsAppOrderIcon className="w-4.5 h-4.5 sm:w-5 sm:h-5 md:w-6 md:h-6 shrink-0 fill-current" />
-              <span>CHAT &amp; ORDER ON WHATSAPP</span>
-            </button>
-          )}
+          <PoprioEditableElement elementId="howToOrder.cta" type="button" label="WhatsApp CTA Button">
+            {whatsappUrl ? (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2.5 sm:gap-3 md:gap-3.5 px-6 sm:px-7 md:px-9 py-3 sm:py-3.5 md:py-4.5 rounded-[0.75rem] md:rounded-[0.875rem] bg-red-orange text-warm-cream border-[0.16rem] md:border-[0.22rem] border-solid border-cocoa-brown font-display text-sm sm:text-base md:text-[1.1875rem] tracking-[0.04em] uppercase cursor-pointer select-none shadow-[0.2rem_0.2rem_0_#4B1F0F] md:shadow-[0.3125rem_0.3125rem_0_#4B1F0F] transition-all duration-200 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-[0.4375rem_0.4375rem_0_#4B1F0F] active:translate-y-0.5 active:scale-[0.99] active:shadow-[0.125rem_0.125rem_0_#4B1F0F]"
+              >
+                <WhatsAppOrderIcon className="w-4.5 h-4.5 sm:w-5 sm:h-5 md:w-6 md:h-6 shrink-0 fill-current" />
+                <span>CHAT &amp; ORDER ON WHATSAPP</span>
+              </a>
+            ) : (
+              <button
+                type="button"
+                disabled
+                aria-disabled="true"
+                className="inline-flex items-center justify-center gap-2.5 sm:gap-3 md:gap-3.5 px-6 sm:px-7 md:px-9 py-3 sm:py-3.5 md:py-4.5 rounded-[0.75rem] md:rounded-[0.875rem] bg-red-orange text-warm-cream border-[0.16rem] md:border-[0.22rem] border-solid border-cocoa-brown font-display text-sm sm:text-base md:text-[1.1875rem] tracking-[0.04em] uppercase opacity-90 cursor-not-allowed select-none shadow-[0.2rem_0.2rem_0_#4B1F0F] md:shadow-[0.3125rem_0.3125rem_0_#4B1F0F]"
+              >
+                <WhatsAppOrderIcon className="w-4.5 h-4.5 sm:w-5 sm:h-5 md:w-6 md:h-6 shrink-0 fill-current" />
+                <span>CHAT &amp; ORDER ON WHATSAPP</span>
+              </button>
+            )}
+          </PoprioEditableElement>
         </div>
       </div>
     </section>

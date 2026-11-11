@@ -123,6 +123,46 @@ export interface PoprioFooterContent {
   copyrightText: string;
 }
 
+/**
+ * Granular Visual CSS & Style Overrides for an individual element.
+ */
+export interface PoprioCustomElementStyle {
+  // Typography
+  fontSize?: string;
+  fontWeight?: string;
+  fontFamily?: string;
+  color?: string;
+  textAlign?: 'left' | 'center' | 'right' | 'justify';
+  lineHeight?: string;
+  letterSpacing?: string;
+  textTransform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
+
+  // Box Model & Spacing
+  paddingTop?: string;
+  paddingRight?: string;
+  paddingBottom?: string;
+  paddingLeft?: string;
+  marginTop?: string;
+  marginRight?: string;
+  marginBottom?: string;
+  marginLeft?: string;
+
+  // Background & Borders
+  backgroundColor?: string;
+  borderColor?: string;
+  borderWidth?: string;
+  borderStyle?: 'solid' | 'dashed' | 'dotted' | 'none';
+  borderRadius?: string;
+
+  // Neo-Brutalist Box Shadow
+  boxShadow?: string;
+
+  // Transforms & Opacity
+  rotation?: number; // In degrees (-15 to 15)
+  scale?: number; // Multiplier (0.8 to 1.3)
+  opacity?: number; // Multiplier (0.0 to 1.0)
+}
+
 export interface PoprioContentSchema {
   version: string;
   updated_at?: string;
@@ -135,5 +175,6 @@ export interface PoprioContentSchema {
   about: PoprioAboutContent;
   contact: PoprioContactContent;
   footer: PoprioFooterContent;
+  /** Granular Element-level CSS Style Overrides keyed by Element ID */
+  styles?: Record<string, PoprioCustomElementStyle>;
 }
-

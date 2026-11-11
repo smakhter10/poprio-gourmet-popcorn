@@ -7,7 +7,7 @@ import React, {
   useRef,
   ReactNode,
 } from 'react';
-import { PoprioContentSchema } from '../types/content';
+import { PoprioContentSchema, PoprioCustomElementStyle } from '../types/content';
 import { usePoprioContent } from './PoprioContentContext';
 import {
   apiFetchContent,
@@ -35,11 +35,17 @@ export interface PoprioToastData {
   type: 'success' | 'error' | 'info';
 }
 
+export type EditableElementType = 'text' | 'image' | 'video' | 'button' | 'card' | 'box';
+
 export interface PoprioEditorContextValue {
   isEditorActive: boolean;
   isEditMode: boolean;
   previewDevice: PreviewDevice;
   selectedSectionId: string | null;
+  selectedElementId: string | null;
+  selectedElementType: EditableElementType | null;
+  selectedElementLabel: string | null;
+  activeInspectorTab: 'content' | 'typography' | 'style';
   isInspectorOpen: boolean;
   isRevisionsOpen: boolean;
   canUndo: boolean;
@@ -52,6 +58,15 @@ export interface PoprioEditorContextValue {
   setEditMode: (edit: boolean) => void;
   setPreviewDevice: (device: PreviewDevice) => void;
   selectSection: (sectionId: string | null) => void;
+  selectElement: (
+    elementId: string | null,
+    type?: EditableElementType,
+    label?: string
+  ) => void;
+  setActiveInspectorTab: (tab: 'content' | 'typography' | 'style') => void;
+  updateElementStyle: (elementId: string, stylePatch: Partial<PoprioCustomElementStyle>) => void;
+  getElementStyle: (elementId: string) => PoprioCustomElementStyle;
+  openMediaLibrary: (onSelect: (url: string) => void) => void;
   openInspector: () => void;
   closeInspector: () => void;
   openRevisions: () => void;
@@ -101,6 +116,10 @@ export const PoprioEditorProvider: React.FC<{ children: ReactNode }> = ({
   const [isEditMode, setIsEditMode] = useState<boolean>(true);
   const [previewDevice, setPreviewDevice] = useState<PreviewDevice>('desktop');
   const [selectedSectionId, setSelectedSectionId] = useState<string | null>(null);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [selectedElementType, setSelectedElementType] = useState<EditableElementType | null>(null);
+  const [selectedElementLabel, setSelectedElementLabel] = useState<string | null>(null);
+  const [activeInspectorTab, setActiveInspectorTab] = useState<'content' | 'typography' | 'style'>('content');
   const [isInspectorOpen, setIsInspectorOpen] = useState<boolean>(false);
   const [isRevisionsOpen, setIsRevisionsOpen] = useState<boolean>(false);
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('clean');
@@ -173,11 +192,38 @@ export const PoprioEditorProvider: React.FC<{ children: ReactNode }> = ({
 
   const selectSection = useCallback((sectionId: string | null) => {
     setSelectedSectionId(sectionId);
+    setSelectedElementId(null);
+    setSelectedElementType(null);
+    setSelectedElementLabel(null);
     if (sectionId) {
       setIsInspectorOpen(true);
       setIsRevisionsOpen(false);
+      setActiveInspectorTab('content');
     }
   }, []);
+
+  const selectElement = useCallback(
+    (
+      elementId: string | null,
+      type: EditableElementType = 'text',
+      label: string = 'Element'
+    ) => {
+      setSelectedElementId(elementId);
+      setSelectedElementType(type);
+      setSelectedElementLabel(label);
+      if (elementId) {
+        setIsInspectorOpen(true);
+        setIsRevisionsOpen(false);
+        // Default to typography for text/button, content for image/video
+        if (type === 'text' || type === 'button') {
+          setActiveInspectorTab('typography');
+        } else {
+          setActiveInspectorTab('content');
+        }
+      }
+    },
+    []
+  );
 
   const openInspector = useCallback(() => {
     setIsInspectorOpen(true);
@@ -186,6 +232,7 @@ export const PoprioEditorProvider: React.FC<{ children: ReactNode }> = ({
 
   const closeInspector = useCallback(() => {
     setIsInspectorOpen(false);
+    setSelectedElementId(null);
   }, []);
 
   const openRevisions = useCallback(async () => {
@@ -222,6 +269,56 @@ export const PoprioEditorProvider: React.FC<{ children: ReactNode }> = ({
       updateContent(patch);
     },
     [content, updateContent]
+  );
+
+  const updateElementStyle = useCallback(
+    (elementId: string, stylePatch: Partial<PoprioCustomElementStyle>) => {
+      const existing = content.styles?.[elementId] || {};
+      const updated = {
+        ...existing,
+        ...stylePatch,
+      };
+      const allStyles = {
+        ...(content.styles || {}),
+        [elementId]: updated,
+      };
+      updateContentWithHistory({ styles: allStyles });
+    },
+    [content, updateContentWithHistory]
+  );
+
+  const getElementStyle = useCallback(
+    (elementId: string): PoprioCustomElementStyle => {
+      return content.styles?.[elementId] || {};
+    },
+    [content]
+  );
+
+  const openMediaLibrary = useCallback(
+    (onSelect: (url: string) => void) => {
+      if (typeof window !== 'undefined' && (window as any).wp && (window as any).wp.media) {
+        const frame = (window as any).wp.media({
+          title: 'Select or Upload Media for POPRIO',
+          button: { text: 'Use this media' },
+          multiple: false,
+        });
+        frame.on('select', () => {
+          const attachment = frame.state().get('selection').first().toJSON();
+          if (attachment && attachment.url) {
+            onSelect(attachment.url);
+            showToast('Media selected from WordPress Library', 'success');
+          }
+        });
+        frame.open();
+      } else {
+        const url = prompt('Enter Image or Video URL:');
+        if (url && url.trim()) {
+          onSelect(url.trim());
+          showToast('Media URL updated', 'success');
+        }
+      }
+    },
+    [showToast]
   );
 
   const undo = useCallback(() => {
@@ -359,6 +456,10 @@ export const PoprioEditorProvider: React.FC<{ children: ReactNode }> = ({
     isEditMode,
     previewDevice,
     selectedSectionId,
+    selectedElementId,
+    selectedElementType,
+    selectedElementLabel,
+    activeInspectorTab,
     isInspectorOpen,
     isRevisionsOpen,
     canUndo: undoCount > 0,
@@ -371,6 +472,11 @@ export const PoprioEditorProvider: React.FC<{ children: ReactNode }> = ({
     setEditMode: setIsEditMode,
     setPreviewDevice,
     selectSection,
+    selectElement,
+    setActiveInspectorTab,
+    updateElementStyle,
+    getElementStyle,
+    openMediaLibrary,
     openInspector,
     closeInspector,
     openRevisions,
@@ -400,4 +506,3 @@ export function usePoprioEditor(): PoprioEditorContextValue {
   }
   return ctx;
 }
-

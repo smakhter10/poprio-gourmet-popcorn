@@ -5,6 +5,7 @@ import { NavLinks } from './NavLinks';
 import { WhatsAppButton } from './WhatsAppButton';
 import { MobileMenu } from './MobileMenu';
 import { usePoprioContent } from '../../context/PoprioContentContext';
+import { PoprioEditableElement } from '../editor/PoprioEditableElement';
 
 interface MainNavbarProps {
   navbarRef: React.RefObject<HTMLDivElement | null>;
@@ -54,26 +55,28 @@ export const MainNavbar: React.FC<MainNavbarProps> = ({
               className="inline-flex items-center shrink-0 rounded-[0.5rem] transition-transform duration-200 hover:scale-[1.03] active:scale-[0.99]"
               aria-label="POPRIO Home"
             >
-              {!logoLoadError ? (
-                <img
-                  ref={logoImgRef}
-                  src={logoSrc}
-                  alt={logoAlt}
-                  width={meta?.logo?.width || SITE_CONFIG.logo.width}
-                  height={meta?.logo?.height || SITE_CONFIG.logo.height}
-                  onError={() => setLogoLoadError(true)}
-                  className="h-[2.5rem] sm:h-[3.25rem] w-auto object-contain select-none origin-left"
-                />
-              ) : (
-                /* Temporary clearly marked placeholder only if asset fails to load */
-                <div
-                  role="img"
-                  aria-label="Temporary Logo Placeholder — Official POPRIO Logo Asset Required"
-                  className="px-3 py-1.5 bg-warm-cream comic-border-card rounded-[0.5rem] text-xs font-bold text-cocoa-brown whitespace-nowrap"
-                >
-                  [LOGO PLACEHOLDER: OFFICIAL ASSET REQUIRED]
-                </div>
-              )}
+              <PoprioEditableElement elementId="meta.logo" type="image" label="POPRIO Logo">
+                {!logoLoadError ? (
+                  <img
+                    ref={logoImgRef}
+                    src={logoSrc}
+                    alt={logoAlt}
+                    width={meta?.logo?.width || SITE_CONFIG.logo.width}
+                    height={meta?.logo?.height || SITE_CONFIG.logo.height}
+                    onError={() => setLogoLoadError(true)}
+                    className="h-[2.5rem] sm:h-[3.25rem] w-auto object-contain select-none origin-left"
+                  />
+                ) : (
+                  /* Temporary clearly marked placeholder only if asset fails to load */
+                  <div
+                    role="img"
+                    aria-label="Temporary Logo Placeholder — Official POPRIO Logo Asset Required"
+                    className="px-3 py-1.5 bg-warm-cream comic-border-card rounded-[0.5rem] text-xs font-bold text-cocoa-brown whitespace-nowrap"
+                  >
+                    [LOGO PLACEHOLDER: OFFICIAL ASSET REQUIRED]
+                  </div>
+                )}
+              </PoprioEditableElement>
             </a>
           </div>
 

@@ -4,6 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { VideoPlaceholder } from './VideoPlaceholder';
 import { getAssetUrl } from '../../lib/assets';
 import { usePoprioContent } from '../../context/PoprioContentContext';
+import { PoprioEditableElement } from '../editor/PoprioEditableElement';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -162,11 +163,18 @@ export const ScrollVideoSection: React.FC<ScrollVideoSectionProps> = ({
             transformOrigin: 'center top',
           }}
         >
-          <VideoPlaceholder
-            videoSrc={effectiveVideoSrc}
-            videoSrcMobile={effectiveVideoSrcMobile}
-            posterSrc={effectivePosterSrc}
-          />
+          <PoprioEditableElement
+            elementId="trailer.video"
+            type="video"
+            label="Trailer Video"
+            className="w-full h-full"
+          >
+            <VideoPlaceholder
+              videoSrc={effectiveVideoSrc}
+              videoSrcMobile={effectiveVideoSrcMobile}
+              posterSrc={effectivePosterSrc}
+            />
+          </PoprioEditableElement>
         </div>
       </div>
     </section>

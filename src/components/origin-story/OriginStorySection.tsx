@@ -9,6 +9,7 @@ import { ComicSoundEffect } from './ComicSoundEffect';
 import { OriginStoryStage } from './OriginStoryStage';
 import { OriginStoryScene } from './OriginStoryScene';
 import { usePoprioContent } from '../../context/PoprioContentContext';
+import { PoprioEditableElement } from '../editor/PoprioEditableElement';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -170,22 +171,26 @@ export const OriginStorySection: React.FC = () => {
         className="relative w-full max-w-[84rem] mx-auto px-6 lg:px-10 pb-8 lg:pb-10 text-center flex flex-col items-center"
       >
         {/* Eyebrow */}
-        <p
-          ref={eyebrowRef}
-          className="m-0 font-jakarta text-[0.875rem] font-extrabold tracking-[0.16em] text-red-orange uppercase"
-        >
-          {intro.eyebrow}
-        </p>
+        <PoprioEditableElement elementId="originStory.eyebrow" type="text" label="Origin Story Eyebrow">
+          <p
+            ref={eyebrowRef}
+            className="m-0 font-jakarta text-[0.875rem] font-extrabold tracking-[0.16em] text-red-orange uppercase"
+          >
+            {intro.eyebrow}
+          </p>
+        </PoprioEditableElement>
 
         {/* Oversized Main Heading + Playful POP! Sticker Accent */}
         <div className="relative inline-flex flex-col items-center mt-3">
-          <h2
-            id="origin-story-heading"
-            ref={headingRef}
-            className="m-0 font-hero text-3xl sm:text-4xl lg:text-[clamp(3rem,5.2vw,5rem)] leading-[1.0] lg:leading-[0.98] tracking-[-0.02em] text-cocoa-brown uppercase"
-          >
-            {intro.heading}
-          </h2>
+          <PoprioEditableElement elementId="originStory.heading" type="text" label="Origin Story Heading">
+            <h2
+              id="origin-story-heading"
+              ref={headingRef}
+              className="m-0 font-hero text-3xl sm:text-4xl lg:text-[clamp(3rem,5.2vw,5rem)] leading-[1.0] lg:leading-[0.98] tracking-[-0.02em] text-cocoa-brown uppercase"
+            >
+              {intro.heading}
+            </h2>
+          </PoprioEditableElement>
 
           {/* Playful Small POP! Sticker Accent */}
           <div
@@ -228,12 +233,14 @@ export const OriginStorySection: React.FC = () => {
         </div>
 
         {/* Supporting Copy */}
-        <p
-          ref={copyRef}
-          className="m-0 mt-3 sm:mt-4 max-w-[36rem] font-jakarta text-sm sm:text-base lg:text-[clamp(1.0625rem,1.35vw,1.25rem)] font-bold leading-relaxed text-cocoa-brown/80"
-        >
-          {intro.description}
-        </p>
+        <PoprioEditableElement elementId="originStory.description" type="text" label="Origin Story Description">
+          <p
+            ref={copyRef}
+            className="m-0 mt-3 sm:mt-4 max-w-[36rem] font-jakarta text-sm sm:text-base lg:text-[clamp(1.0625rem,1.35vw,1.25rem)] font-bold leading-relaxed text-cocoa-brown/80"
+          >
+            {intro.description}
+          </p>
+        </PoprioEditableElement>
       </div>
 
       {/* =====================================================================

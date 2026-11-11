@@ -480,6 +480,7 @@ class Poprio_Content_Schema {
 				'ctaFlavoursText'  => 'VIEW FLAVOURS',
 				'copyrightText'    => 'All rights reserved. Handcrafted with obsession in Dhaka.',
 			],
+			'styles'       => [],
 		];
 	}
 
@@ -815,6 +816,85 @@ class Poprio_Content_Schema {
 			'ctaFlavoursText' => self::sanitize_text( $input['footer']['ctaFlavoursText'] ?? $defaults['footer']['ctaFlavoursText'] ),
 			'copyrightText'   => self::sanitize_text( $input['footer']['copyrightText'] ?? $defaults['footer']['copyrightText'] ),
 		];
+
+		// 10. Granular Element-level CSS Style Overrides
+		$clean['styles'] = [];
+		$rawStyles = $input['styles'] ?? [];
+		if ( is_array( $rawStyles ) ) {
+			foreach ( $rawStyles as $elemId => $styleRules ) {
+				$elemIdClean = preg_replace( '/[^a-zA-Z0-9_\-\.]/', '', (string) $elemId );
+				if ( ! empty( $elemIdClean ) && is_array( $styleRules ) ) {
+					$cleanStyle = [];
+					// Typography
+					if ( isset( $styleRules['fontSize'] ) ) {
+						$cleanStyle['fontSize'] = self::sanitize_text( $styleRules['fontSize'] );
+					}
+					if ( isset( $styleRules['fontWeight'] ) ) {
+						$cleanStyle['fontWeight'] = self::sanitize_text( $styleRules['fontWeight'] );
+					}
+					if ( isset( $styleRules['fontFamily'] ) ) {
+						$cleanStyle['fontFamily'] = self::sanitize_text( $styleRules['fontFamily'] );
+					}
+					if ( isset( $styleRules['color'] ) ) {
+						$cleanStyle['color'] = self::sanitize_color( $styleRules['color'] );
+					}
+					if ( isset( $styleRules['textAlign'] ) && in_array( $styleRules['textAlign'], [ 'left', 'center', 'right', 'justify' ], true ) ) {
+						$cleanStyle['textAlign'] = $styleRules['textAlign'];
+					}
+					if ( isset( $styleRules['lineHeight'] ) ) {
+						$cleanStyle['lineHeight'] = self::sanitize_text( $styleRules['lineHeight'] );
+					}
+					if ( isset( $styleRules['letterSpacing'] ) ) {
+						$cleanStyle['letterSpacing'] = self::sanitize_text( $styleRules['letterSpacing'] );
+					}
+					if ( isset( $styleRules['textTransform'] ) && in_array( $styleRules['textTransform'], [ 'none', 'uppercase', 'lowercase', 'capitalize' ], true ) ) {
+						$cleanStyle['textTransform'] = $styleRules['textTransform'];
+					}
+
+					// Box Model & Spacing
+					foreach ( [ 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'marginTop', 'marginRight', 'marginBottom', 'marginLeft' ] as $spacingProp ) {
+						if ( isset( $styleRules[ $spacingProp ] ) ) {
+							$cleanStyle[ $spacingProp ] = self::sanitize_text( $styleRules[ $spacingProp ] );
+						}
+					}
+
+					// Background & Borders
+					if ( isset( $styleRules['backgroundColor'] ) ) {
+						$cleanStyle['backgroundColor'] = self::sanitize_color( $styleRules['backgroundColor'] );
+					}
+					if ( isset( $styleRules['borderColor'] ) ) {
+						$cleanStyle['borderColor'] = self::sanitize_color( $styleRules['borderColor'] );
+					}
+					if ( isset( $styleRules['borderWidth'] ) ) {
+						$cleanStyle['borderWidth'] = self::sanitize_text( $styleRules['borderWidth'] );
+					}
+					if ( isset( $styleRules['borderStyle'] ) && in_array( $styleRules['borderStyle'], [ 'solid', 'dashed', 'dotted', 'none' ], true ) ) {
+						$cleanStyle['borderStyle'] = $styleRules['borderStyle'];
+					}
+					if ( isset( $styleRules['borderRadius'] ) ) {
+						$cleanStyle['borderRadius'] = self::sanitize_text( $styleRules['borderRadius'] );
+					}
+					if ( isset( $styleRules['boxShadow'] ) ) {
+						$cleanStyle['boxShadow'] = self::sanitize_text( $styleRules['boxShadow'] );
+					}
+
+					// Transforms & Opacity
+					if ( isset( $styleRules['rotation'] ) ) {
+						$cleanStyle['rotation'] = (float) $styleRules['rotation'];
+					}
+					if ( isset( $styleRules['scale'] ) ) {
+						$cleanStyle['scale'] = (float) $styleRules['scale'];
+					}
+					if ( isset( $styleRules['opacity'] ) ) {
+						$cleanStyle['opacity'] = (float) $styleRules['opacity'];
+					}
+
+					if ( ! empty( $cleanStyle ) ) {
+						$clean['styles'][ $elemIdClean ] = $cleanStyle;
+					}
+				}
+			}
+		}
 
 		return $clean;
 	}
