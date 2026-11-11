@@ -34,3 +34,4 @@ if __name__ == '__main__':
     print(f"Packaging poprio-theme with standard forward-slash archive structure...")
     size = package_zip(theme_dir, dest_zip, 'poprio-theme')
     print(f"✓ Created installable theme ZIP: poprio-theme.zip ({size} MB)")
+
