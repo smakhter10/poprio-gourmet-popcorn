@@ -279,6 +279,7 @@ export function getDefaultContentSchema(): PoprioContentSchema {
       ctaFlavoursText: 'VIEW FLAVOURS',
       copyrightText: 'All rights reserved. Handcrafted with obsession in Dhaka.',
     },
+    styles: {},
   };
 }
 
@@ -309,10 +310,16 @@ function hydrateServerContent(
       ...defaults.hero,
       ...(raw.hero || {}),
       packages: (raw.hero?.packages || defaults.hero.packages).map(
-        (p: any) => ({
-          ...p,
-          imagePath: normalizeAssetUrl(p.imagePath),
-        })
+        (p: any, idx: number) => {
+          const defaultPkg =
+            defaults.hero.packages.find((dp) => dp.id === p.id) ||
+            defaults.hero.packages[idx];
+          const rawPath = p.imagePath || defaultPkg?.imagePath || '';
+          return {
+            ...p,
+            imagePath: normalizeAssetUrl(rawPath),
+          };
+        }
       ),
     },
     trailer: {
@@ -373,6 +380,7 @@ function hydrateServerContent(
       ...defaults.footer,
       ...(raw.footer || {}),
     },
+    styles: raw.styles || defaults.styles || {},
   };
 }
 

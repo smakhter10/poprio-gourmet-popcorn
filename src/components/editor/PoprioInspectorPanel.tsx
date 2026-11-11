@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { usePoprioEditor } from '../../context/PoprioEditorContext';
-import { usePoprioContent } from '../../context/PoprioContentContext';
+import { usePoprioContent, getDefaultContentSchema } from '../../context/PoprioContentContext';
 import {
   X,
   Sliders,
@@ -50,6 +50,26 @@ export const PoprioInspectorPanel: React.FC = () => {
 
   // Active element custom style
   const currentStyle = selectedElementId ? getElementStyle(selectedElementId) : {};
+
+  // Active element media URL (if image or video)
+  let currentMediaUrl = '';
+  if (selectedElementId === 'meta.logo') {
+    currentMediaUrl = content.meta?.logo?.src || '';
+  } else if (selectedElementId?.startsWith('hero.package.')) {
+    const targetId = selectedElementId.replace('hero.package.', '');
+    const pkg = content.hero?.packages?.find((p, idx) => p.id === targetId || String(idx) === targetId);
+    currentMediaUrl = pkg?.imagePath || '';
+  } else if (selectedElementId === 'trailer.video') {
+    currentMediaUrl = content.trailer?.videoSrc || '';
+  } else if (selectedElementId === 'trailer.poster') {
+    currentMediaUrl = content.trailer?.posterSrc || '';
+  } else if (selectedElementId === 'howToOrder.video') {
+    currentMediaUrl = content.howToOrder?.videoSrc || '';
+  } else if (selectedElementId?.startsWith('flavourverse.card.')) {
+    const cardId = selectedElementId.replace('flavourverse.card.', '');
+    const card = content.flavourverse?.cards?.find((c, idx) => c.id === cardId || String(idx) === cardId);
+    currentMediaUrl = card?.packageImage || '';
+  }
 
   // Color palette presets
   const brandPalette = [
@@ -175,6 +195,56 @@ export const PoprioInspectorPanel: React.FC = () => {
                       <span>Update Media Source</span>
                     </div>
 
+                    {/* Live Media Preview & Quick Reset */}
+                    {currentMediaUrl && (
+                      <div className="flex items-center gap-3 p-2 bg-amber-50 rounded-lg border border-[#4B1F0F]/20">
+                        {selectedElementType === 'image' && (
+                          <img
+                            src={currentMediaUrl}
+                            alt="Current asset preview"
+                            className="w-12 h-12 object-contain bg-white rounded border border-[#4B1F0F]/20 shrink-0"
+                          />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <span className="text-[10px] font-bold text-[#4B1F0F]/70 block truncate">
+                            Active: {currentMediaUrl.split('/').pop() || currentMediaUrl}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (selectedElementId === 'meta.logo') {
+                                updateContentWithHistory({
+                                  meta: { ...content.meta, logo: { ...content.meta.logo, src: '/assets/brand/poprio-logo.webp' } },
+                                });
+                              } else if (selectedElementId?.startsWith('hero.package.')) {
+                                const targetId = selectedElementId.replace('hero.package.', '');
+                                const defaults = getDefaultContentSchema();
+                                const defPkg = defaults.hero.packages.find((p, idx) => p.id === targetId || String(idx) === targetId);
+                                if (defPkg) {
+                                  const updated = content.hero.packages.map((p, idx) =>
+                                    (p.id === targetId || String(idx) === targetId) ? { ...p, imagePath: defPkg.imagePath } : p
+                                  );
+                                  updateContentWithHistory({ hero: { ...content.hero, packages: updated } });
+                                }
+                              } else if (selectedElementId === 'trailer.video') {
+                                updateContentWithHistory({
+                                  trailer: { ...content.trailer, videoSrc: '/assets/videos/POPRIO-The-Art-of-The-Pop-15s-Trailer-1920x1080.mp4' },
+                                });
+                              } else if (selectedElementId === 'howToOrder.video') {
+                                updateContentWithHistory({
+                                  howToOrder: { ...content.howToOrder, videoSrc: '/assets/videos/how-it-works.mp4' },
+                                });
+                              }
+                            }}
+                            className="text-[10px] text-red-600 font-bold hover:underline flex items-center gap-1 mt-1 cursor-pointer"
+                          >
+                            <RotateCcw className="w-3 h-3" />
+                            <span>Reset to Brand Default Media</span>
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
                     {/* WordPress Media Library 1-Click Button */}
                     <button
                       type="button"
@@ -185,10 +255,11 @@ export const PoprioInspectorPanel: React.FC = () => {
                               meta: { ...content.meta, logo: { ...content.meta.logo, src: url } },
                             });
                           } else if (selectedElementId?.startsWith('hero.package.')) {
-                            const idx = parseInt(selectedElementId.replace('hero.package.', ''), 10);
-                            const copy = [...content.hero.packages];
-                            copy[idx] = { ...copy[idx], imagePath: url };
-                            updateContentWithHistory({ hero: { ...content.hero, packages: copy } });
+                            const targetId = selectedElementId.replace('hero.package.', '');
+                            const updated = content.hero.packages.map((p, idx) =>
+                              (p.id === targetId || String(idx) === targetId) ? { ...p, imagePath: url } : p
+                            );
+                            updateContentWithHistory({ hero: { ...content.hero, packages: updated } });
                           } else if (selectedElementId === 'trailer.video') {
                             updateContentWithHistory({
                               trailer: { ...content.trailer, videoSrc: url },
@@ -202,9 +273,10 @@ export const PoprioInspectorPanel: React.FC = () => {
                               howToOrder: { ...content.howToOrder, videoSrc: url },
                             });
                           } else if (selectedElementId?.startsWith('flavourverse.card.')) {
-                            const idx = parseInt(selectedElementId.replace('flavourverse.card.', ''), 10);
-                            const copy = [...content.flavourverse.cards];
-                            copy[idx] = { ...copy[idx], packageImage: url };
+                            const cardId = selectedElementId.replace('flavourverse.card.', '');
+                            const copy = content.flavourverse.cards.map((c, idx) =>
+                              (c.id === cardId || String(idx) === cardId) ? { ...c, packageImage: url } : c
+                            );
                             updateContentWithHistory({ flavourverse: { ...content.flavourverse, cards: copy } });
                           } else {
                             updateElementStyle(selectedElementId, {
@@ -231,6 +303,7 @@ export const PoprioInspectorPanel: React.FC = () => {
                       <input
                         type="text"
                         placeholder="https://... or /assets/..."
+                        value={currentMediaUrl}
                         onChange={(e) => {
                           const url = e.target.value;
                           if (selectedElementId === 'meta.logo') {
@@ -238,10 +311,11 @@ export const PoprioInspectorPanel: React.FC = () => {
                               meta: { ...content.meta, logo: { ...content.meta.logo, src: url } },
                             });
                           } else if (selectedElementId?.startsWith('hero.package.')) {
-                            const idx = parseInt(selectedElementId.replace('hero.package.', ''), 10);
-                            const copy = [...content.hero.packages];
-                            copy[idx] = { ...copy[idx], imagePath: url };
-                            updateContentWithHistory({ hero: { ...content.hero, packages: copy } });
+                            const targetId = selectedElementId.replace('hero.package.', '');
+                            const updated = content.hero.packages.map((p, idx) =>
+                              (p.id === targetId || String(idx) === targetId) ? { ...p, imagePath: url } : p
+                            );
+                            updateContentWithHistory({ hero: { ...content.hero, packages: updated } });
                           } else if (selectedElementId === 'trailer.video') {
                             updateContentWithHistory({
                               trailer: { ...content.trailer, videoSrc: url },
@@ -250,6 +324,12 @@ export const PoprioInspectorPanel: React.FC = () => {
                             updateContentWithHistory({
                               howToOrder: { ...content.howToOrder, videoSrc: url },
                             });
+                          } else if (selectedElementId?.startsWith('flavourverse.card.')) {
+                            const cardId = selectedElementId.replace('flavourverse.card.', '');
+                            const copy = content.flavourverse.cards.map((c, idx) =>
+                              (c.id === cardId || String(idx) === cardId) ? { ...c, packageImage: url } : c
+                            );
+                            updateContentWithHistory({ flavourverse: { ...content.flavourverse, cards: copy } });
                           }
                         }}
                         className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"

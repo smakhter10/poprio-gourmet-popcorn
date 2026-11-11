@@ -388,8 +388,9 @@ export const HeroPackageShowcase: React.FC = () => {
       >
         <div className="relative flex items-end justify-center py-4 px-4">
           {HERO_FAN_SLOTS.map((slot, index) => {
-            const pkg = shuffledPackages[index];
-            if (!pkg) return null;
+            const basePkg = shuffledPackages[index];
+            if (!basePkg) return null;
+            const pkg = hero?.packages?.find((p) => p.id === basePkg.id) || basePkg;
 
             const isCentre = slot.slotId === 'centre';
 
@@ -422,7 +423,7 @@ export const HeroPackageShowcase: React.FC = () => {
               >
                 <span className="w-full aspect-[3/4] flex items-center justify-center">
                   <PoprioEditableElement
-                    elementId={`hero.package.${index}`}
+                    elementId={`hero.package.${pkg.id}`}
                     type="image"
                     label={`Pouch: ${pkg.flavourName}`}
                     className="w-full h-full flex items-center justify-center"
@@ -483,7 +484,8 @@ export const HeroPackageShowcase: React.FC = () => {
           </button>
 
           {/* Carousel Stage: All 5 packages positioned and animated with GSAP */}
-          {shuffledPackages.map((pkg, idx) => {
+          {shuffledPackages.map((basePkg, idx) => {
+            const pkg = hero?.packages?.find((p) => p.id === basePkg.id) || basePkg;
             const diff = getMobileDiff(idx, mobileIndex, shuffledPackages.length);
             const isCenter = diff === 0;
             const isLeftPeek = diff === -1;
@@ -525,7 +527,7 @@ export const HeroPackageShowcase: React.FC = () => {
               >
                 {isCenter ? (
                   <PoprioEditableElement
-                    elementId={`hero.package.${idx}`}
+                    elementId={`hero.package.${pkg.id}`}
                     type="image"
                     label={`Pouch: ${pkg.flavourName}`}
                     className="w-full h-full flex items-center justify-center"

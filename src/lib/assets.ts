@@ -53,14 +53,27 @@ function resolveThemeAssetsBase(): string {
 
 export function getAssetUrl(path: string): string {
   if (!path) return '';
-  if (/^(https?:)?\/\//.test(path) || path.startsWith('data:')) {
+
+  // 1. Absolute URLs, protocol-relative, data URLs, and blob previews
+  if (/^(https?:)?\/\//.test(path) || path.startsWith('data:') || path.startsWith('blob:')) {
     return path;
   }
 
-  // Strip leading slashes and optional 'assets/' prefix for uniform joining
+  // 2. WordPress Media Library uploads (e.g. /wp-content/uploads/...)
+  if (path.startsWith('/wp-content/') || path.startsWith('/wp-includes/')) {
+    if (typeof window !== 'undefined') {
+      const wpData = (window as any).POPRIO_DATA;
+      if (wpData?.siteUrl) {
+        return `${String(wpData.siteUrl).replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`;
+      }
+    }
+    return path;
+  }
+
+  // 3. Theme-relative assets (normalize leading slashes and optional 'assets/' prefix)
   let cleanPath = path.replace(/^\/?(assets\/)?/, '');
 
-  // Normalize spaces to %20 so file requests with spaces succeed uniformly
+  // Normalize spaces to %20 so file requests with spaces succeed uniformly across all web servers
   if (!cleanPath.includes('%20') && cleanPath.includes(' ')) {
     cleanPath = cleanPath.replace(/ /g, '%20');
   }
