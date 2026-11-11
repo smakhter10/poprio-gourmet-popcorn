@@ -55,3 +55,8 @@ Preview the production build:
 ```bash
 npm run preview
 ```
+
+## Deployment
+
+This `main` branch powers the live production deployment on Vercel. WordPress theme development is maintained on the `wordpress-theme` branch.
+
