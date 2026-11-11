@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ArrowUpRight } from 'lucide-react';
 import { FlavourBentoCardConfig } from '../../data/products';
 import { useProductModal } from '../../context/ProductModalContext';
+import { PoprioEditableElement } from '../editor/PoprioEditableElement';
 
 interface FlavourBentoCardProps {
   card: FlavourBentoCardConfig;
@@ -307,14 +308,20 @@ export const FlavourBentoCard = forwardRef<
                 ref={hoverImageRef}
                 className="relative z-10 flex items-center justify-center"
               >
-                <img
-                  src={card.packageImage}
-                  alt={card.packageAlt}
-                  loading="lazy"
-                  decoding="async"
-                  draggable={false}
-                  className="h-[12.5rem] sm:h-[15rem] lg:h-[18.75rem] w-auto object-contain drop-shadow-[0_10px_0_rgba(75,31,15,0.32)] select-none pointer-events-none"
-                />
+                <PoprioEditableElement
+                  elementId={`flavourverse.card.${card.id}`}
+                  type="image"
+                  label={`${card.title} Package`}
+                >
+                  <img
+                    src={card.packageImage}
+                    alt={card.packageAlt}
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                    className="h-[12.5rem] sm:h-[15rem] lg:h-[18.75rem] w-auto object-contain drop-shadow-[0_10px_0_rgba(75,31,15,0.32)] select-none pointer-events-none"
+                  />
+                </PoprioEditableElement>
               </div>
             </span>
           </>
@@ -377,14 +384,20 @@ export const FlavourBentoCard = forwardRef<
                 ref={hoverImageRef}
                 className="relative z-10 flex items-center justify-center"
               >
-                <img
-                  src={card.packageImage}
-                  alt={card.packageAlt}
-                  loading="lazy"
-                  decoding="async"
-                  draggable={false}
-                  className="h-[9.5rem] sm:h-[11rem] lg:h-[12.75rem] w-auto object-contain drop-shadow-[0_9px_0_rgba(75,31,15,0.34)] select-none pointer-events-none"
-                />
+                <PoprioEditableElement
+                  elementId={`flavourverse.card.${card.id}`}
+                  type="image"
+                  label={`${card.title} Package`}
+                >
+                  <img
+                    src={card.packageImage}
+                    alt={card.packageAlt}
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                    className="h-[9.5rem] sm:h-[11rem] lg:h-[12.75rem] w-auto object-contain drop-shadow-[0_9px_0_rgba(75,31,15,0.34)] select-none pointer-events-none"
+                  />
+                </PoprioEditableElement>
               </div>
             </span>
           </>
@@ -465,14 +478,20 @@ export const FlavourBentoCard = forwardRef<
                 ref={hoverImageRef}
                 className="relative z-10 flex items-center justify-center"
               >
-                <img
-                  src={card.packageImage}
-                  alt={card.packageAlt}
-                  loading="lazy"
-                  decoding="async"
-                  draggable={false}
-                  className="h-[12rem] sm:h-[15rem] lg:h-[18rem] w-auto object-contain drop-shadow-[0_12px_0_rgba(75,31,15,0.34)] select-none pointer-events-none"
-                />
+                <PoprioEditableElement
+                  elementId={`flavourverse.card.${card.id}`}
+                  type="image"
+                  label={`${card.title} Package`}
+                >
+                  <img
+                    src={card.packageImage}
+                    alt={card.packageAlt}
+                    loading="lazy"
+                    decoding="async"
+                    draggable={false}
+                    className="h-[12rem] sm:h-[15rem] lg:h-[18rem] w-auto object-contain drop-shadow-[0_12px_0_rgba(75,31,15,0.34)] select-none pointer-events-none"
+                  />
+                </PoprioEditableElement>
               </div>
             </span>
           </>

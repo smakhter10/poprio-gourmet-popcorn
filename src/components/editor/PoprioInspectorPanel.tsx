@@ -39,10 +39,24 @@ export const PoprioInspectorPanel: React.FC = () => {
 
   const { content } = usePoprioContent();
 
-  // Internal tab state for sub-item editors (flavours, scenes, steps)
+  // Internal tab state for sub-item editors (flavours, scenes, steps, hero packages)
   const [activeFlavourIdx, setActiveFlavourIdx] = useState<number>(0);
   const [activeSceneIdx, setActiveSceneIdx] = useState<number>(0);
   const [activeStepIdx, setActiveStepIdx] = useState<number>(0);
+  const [activeHeroPackageIdx, setActiveHeroPackageIdx] = useState<number>(0);
+
+  // Section human-readable titles mapping
+  const sectionTitles: Record<string, string> = {
+    header: 'Header & Announcement',
+    hero: 'Hero Section',
+    trailer: 'Cinematic Trailer',
+    flavourverse: 'Flavourverse Grid',
+    'origin-story': 'Origin Story',
+    'how-to-order': 'How to Order',
+    about: 'About Page',
+    contact: 'Contact & FAQs',
+    footer: 'Finale & Footer',
+  };
 
   if (!isInspectorOpen) {
     return null;
@@ -106,7 +120,7 @@ export const PoprioInspectorPanel: React.FC = () => {
             <Sliders className="w-5 h-5 text-[#4B1F0F]" />
             <div>
               <h2 className="font-heading text-sm font-black uppercase tracking-wider text-[#4B1F0F]">
-                {selectedElementLabel || (selectedSectionId ? `Section: ${selectedSectionId}` : 'Editorial Box')}
+                {selectedElementLabel || (selectedSectionId ? (sectionTitles[selectedSectionId] || `Section: ${selectedSectionId}`) : 'Editorial Box')}
               </h2>
               <span className="text-[10px] font-bold text-[#4B1F0F]/80 uppercase">
                 {selectedElementId ? `Element ID: ${selectedElementId}` : `Section: ${selectedSectionId || 'General'}`}
@@ -1096,45 +1110,1389 @@ export const PoprioInspectorPanel: React.FC = () => {
               💡 <strong>Pro-Tip:</strong> Click on any individual headline, button, or package image directly on the page to open its granular <strong>Typography & CSS Editorial Box</strong>!
             </div>
 
+            {/* ======================================================== */}
+            {/* SECTION: HEADER                                          */}
+            {/* ======================================================== */}
+            {selectedSectionId === 'header' && (
+              <div className="space-y-4">
+                {/* Logo Uploader */}
+                <div className="p-3 bg-white rounded-xl border-2 border-[#4B1F0F] space-y-2">
+                  <label className="block text-xs font-black uppercase tracking-wider">
+                    POPRIO Logo Asset
+                  </label>
+                  {content.meta?.logo?.src && (
+                    <div className="flex items-center gap-3 p-2 bg-amber-50 rounded-lg border border-[#4B1F0F]/20">
+                      <img
+                        src={content.meta.logo.src}
+                        alt="Logo Preview"
+                        className="w-12 h-12 object-contain bg-white rounded border border-[#4B1F0F]/20 shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <span className="text-[10px] font-bold text-[#4B1F0F]/70 block truncate">
+                          {content.meta.logo.src.split('/').pop() || content.meta.logo.src}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const defaults = getDefaultContentSchema();
+                            updateContentWithHistory({
+                              meta: { ...content.meta, logo: { ...content.meta.logo, src: defaults.meta.logo.src } },
+                            });
+                          }}
+                          className="text-[10px] text-red-600 font-bold hover:underline flex items-center gap-1 mt-1 cursor-pointer"
+                        >
+                          <RotateCcw className="w-3 h-3" />
+                          <span>Reset to Default Logo</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openMediaLibrary((url) => {
+                        updateContentWithHistory({
+                          meta: { ...content.meta, logo: { ...content.meta.logo, src: url } },
+                        });
+                      });
+                    }}
+                    className="flex items-center justify-center gap-2 w-full py-2 bg-[#FFC72C] hover:bg-[#ffbf11] text-[#4B1F0F] font-heading text-xs font-black uppercase tracking-wider rounded-lg border-2 border-[#4B1F0F] shadow-[2px_2px_0px_#4B1F0F] active:translate-x-[1px] active:translate-y-[1px] transition-all cursor-pointer"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Choose / Upload Logo (WP Media)</span>
+                  </button>
+                  <input
+                    type="text"
+                    placeholder="Logo URL"
+                    value={content.meta?.logo?.src || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        meta: { ...content.meta, logo: { ...content.meta.logo, src: e.target.value } },
+                      })
+                    }
+                    className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    WhatsApp Hotline Number
+                  </label>
+                  <input
+                    type="text"
+                    value={content.meta?.whatsappNumber || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        meta: { ...content.meta, whatsappNumber: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                    placeholder="8801705117793"
+                  />
+                  <p className="text-[10px] text-[#4B1F0F]/70 mt-1">
+                    Used across all WhatsApp order buttons and links.
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    WhatsApp Default Greeting
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={content.meta?.whatsappGreeting || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        meta: { ...content.meta, whatsappGreeting: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                    placeholder="Hi POPRIO! I'd like to order..."
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SECTION: HERO                                            */}
+            {/* ======================================================== */}
             {selectedSectionId === 'hero' && (
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                    Eyebrow 1
+                    Eyebrow Line 1
                   </label>
                   <input
                     type="text"
-                    value={content.hero.eyebrow1}
+                    value={content.hero?.eyebrow1 || ''}
                     onChange={(e) =>
-                      updateContentWithHistory({ hero: { ...content.hero, eyebrow1: e.target.value } })
+                      updateContentWithHistory({
+                        hero: { ...content.hero, eyebrow1: e.target.value },
+                      })
                     }
-                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-bold"
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
                   />
                 </div>
+
                 <div>
                   <label className="block text-xs font-black uppercase tracking-wider mb-1">
-                    Eyebrow 2
+                    Eyebrow Line 2
                   </label>
                   <input
                     type="text"
-                    value={content.hero.eyebrow2}
+                    value={content.hero?.eyebrow2 || ''}
                     onChange={(e) =>
-                      updateContentWithHistory({ hero: { ...content.hero, eyebrow2: e.target.value } })
+                      updateContentWithHistory({
+                        hero: { ...content.hero, eyebrow2: e.target.value },
+                      })
                     }
-                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-bold"
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
                   />
                 </div>
+
                 <div>
                   <label className="block text-xs font-black uppercase tracking-wider mb-1">
                     Subtitle
                   </label>
                   <textarea
                     rows={3}
-                    value={content.hero.subtitle}
+                    value={content.hero?.subtitle || ''}
                     onChange={(e) =>
-                      updateContentWithHistory({ hero: { ...content.hero, subtitle: e.target.value } })
+                      updateContentWithHistory({
+                        hero: { ...content.hero, subtitle: e.target.value },
+                      })
                     }
-                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium"
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    CTA Button Text
+                  </label>
+                  <input
+                    type="text"
+                    value={content.hero?.ctaText || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        hero: { ...content.hero, ctaText: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                {/* Rotating Words Management */}
+                <div className="pt-2 border-t-2 border-[#4B1F0F]/15">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-black uppercase tracking-wider">
+                      Rotating Words ({content.hero?.primaryWords?.length || 0})
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const current = [...(content.hero?.primaryWords || [])];
+                        current.push({
+                          text: 'Crunch',
+                          color: '#FFFFFF',
+                          pillBg: 'var(--color-warm-cream)',
+                          badgeBg: 'var(--color-red-orange)',
+                          strokeColor: '#180904',
+                          strokeWidth: '0.24rem',
+                        });
+                        updateContentWithHistory({
+                          hero: { ...content.hero, primaryWords: current },
+                        });
+                      }}
+                      className="flex items-center gap-1 text-[11px] font-bold text-[#4B1F0F] bg-[#FFC72C] hover:bg-white px-2 py-1 rounded border border-[#4B1F0F] transition-colors cursor-pointer"
+                    >
+                      <Plus className="w-3 h-3" />
+                      <span>Add Word</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {(content.hero?.primaryWords || []).map((w, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center gap-2 p-2 bg-white rounded-lg border-2 border-[#4B1F0F]/30"
+                      >
+                        <input
+                          type="text"
+                          value={w.text}
+                          onChange={(e) => {
+                            const copy = [...content.hero.primaryWords];
+                            copy[idx] = { ...copy[idx], text: e.target.value };
+                            updateContentWithHistory({
+                              hero: { ...content.hero, primaryWords: copy },
+                            });
+                          }}
+                          className="flex-1 px-2 py-1 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-bold"
+                        />
+                        <button
+                          type="button"
+                          disabled={content.hero.primaryWords.length <= 1}
+                          onClick={() => {
+                            const copy = content.hero.primaryWords.filter((_, i) => i !== idx);
+                            updateContentWithHistory({
+                              hero: { ...content.hero, primaryWords: copy },
+                            });
+                          }}
+                          className="p-1 text-red-600 hover:bg-red-50 rounded disabled:opacity-30 cursor-pointer"
+                          title="Remove word"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Hero Showcase Packages Management */}
+                <div className="pt-2 border-t-2 border-[#4B1F0F]/15">
+                  <label className="block text-xs font-black uppercase tracking-wider mb-2">
+                    Hero Showcase Packages
+                  </label>
+                  <div className="grid grid-cols-5 gap-1 mb-3">
+                    {(content.hero?.packages || []).map((pkg, idx) => (
+                      <button
+                        key={pkg.id || idx}
+                        type="button"
+                        onClick={() => setActiveHeroPackageIdx(idx)}
+                        className={`py-1.5 text-[10px] font-black uppercase rounded-lg border-2 transition-all cursor-pointer ${
+                          activeHeroPackageIdx === idx
+                            ? 'bg-[#4B1F0F] text-[#FFC72C] border-[#4B1F0F] shadow-sm'
+                            : 'bg-white text-[#4B1F0F] border-[#4B1F0F]/30 hover:bg-amber-100'
+                        }`}
+                      >
+                        #{idx + 1}
+                      </button>
+                    ))}
+                  </div>
+
+                  {content.hero?.packages?.[activeHeroPackageIdx] && (
+                    <div className="p-3 bg-white rounded-xl border-2 border-[#4B1F0F] space-y-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#4B1F0F]/80 uppercase mb-0.5">
+                          Flavour Name
+                        </label>
+                        <input
+                          type="text"
+                          value={content.hero.packages[activeHeroPackageIdx].flavourName}
+                          onChange={(e) => {
+                            const copy = [...content.hero.packages];
+                            copy[activeHeroPackageIdx] = {
+                              ...copy[activeHeroPackageIdx],
+                              flavourName: e.target.value,
+                            };
+                            updateContentWithHistory({
+                              hero: { ...content.hero, packages: copy },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-bold"
+                        />
+                      </div>
+
+                      {/* Package Image */}
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#4B1F0F]/80 uppercase mb-1">
+                          Package Image
+                        </label>
+                        <div className="flex items-center gap-3 p-2 bg-amber-50 rounded-lg border border-[#4B1F0F]/20 mb-2">
+                          <img
+                            src={content.hero.packages[activeHeroPackageIdx].imagePath}
+                            alt="Package Preview"
+                            className="w-12 h-12 object-contain bg-white rounded border border-[#4B1F0F]/20 shrink-0"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[10px] font-bold text-[#4B1F0F]/70 block truncate">
+                              {content.hero.packages[activeHeroPackageIdx].imagePath.split('/').pop()}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const defaults = getDefaultContentSchema();
+                                const defPkg = defaults.hero.packages[activeHeroPackageIdx];
+                                if (defPkg) {
+                                  const copy = [...content.hero.packages];
+                                  copy[activeHeroPackageIdx] = {
+                                    ...copy[activeHeroPackageIdx],
+                                    imagePath: defPkg.imagePath,
+                                  };
+                                  updateContentWithHistory({
+                                    hero: { ...content.hero, packages: copy },
+                                  });
+                                }
+                              }}
+                              className="text-[10px] text-red-600 font-bold hover:underline flex items-center gap-1 mt-1 cursor-pointer"
+                            >
+                              <RotateCcw className="w-3 h-3" />
+                              <span>Reset to Default Image</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            openMediaLibrary((url) => {
+                              const copy = [...content.hero.packages];
+                              copy[activeHeroPackageIdx] = {
+                                ...copy[activeHeroPackageIdx],
+                                imagePath: url,
+                              };
+                              updateContentWithHistory({
+                                hero: { ...content.hero, packages: copy },
+                              });
+                            });
+                          }}
+                          className="flex items-center justify-center gap-2 w-full py-2 bg-[#FFC72C] hover:bg-[#ffbf11] text-[#4B1F0F] font-heading text-xs font-black uppercase tracking-wider rounded-lg border-2 border-[#4B1F0F] shadow-[2px_2px_0px_#4B1F0F] active:translate-x-[1px] active:translate-y-[1px] transition-all cursor-pointer mb-2"
+                        >
+                          <Upload className="w-4 h-4" />
+                          <span>Choose / Upload Package Image (WP Media)</span>
+                        </button>
+
+                        <input
+                          type="text"
+                          placeholder="Image URL"
+                          value={content.hero.packages[activeHeroPackageIdx].imagePath}
+                          onChange={(e) => {
+                            const copy = [...content.hero.packages];
+                            copy[activeHeroPackageIdx] = {
+                              ...copy[activeHeroPackageIdx],
+                              imagePath: e.target.value,
+                            };
+                            updateContentWithHistory({
+                              hero: { ...content.hero, packages: copy },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SECTION: TRAILER                                         */}
+            {/* ======================================================== */}
+            {selectedSectionId === 'trailer' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Badge Text
+                  </label>
+                  <input
+                    type="text"
+                    value={content.trailer?.badge || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        trailer: { ...content.trailer, badge: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                    placeholder="THE SOUND OF THE POP"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Section Heading
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={content.trailer?.heading || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        trailer: { ...content.trailer, heading: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                    placeholder="Experience the Crunch"
+                  />
+                </div>
+
+                {/* Video Source (Desktop MP4) */}
+                <div className="p-3 bg-white rounded-xl border-2 border-[#4B1F0F] space-y-2">
+                  <div className="flex items-center gap-1.5">
+                    <VideoIcon className="w-4 h-4 text-[#4B1F0F]" />
+                    <label className="block text-xs font-black uppercase tracking-wider">
+                      Trailer Video (Desktop 16:9 MP4)
+                    </label>
+                  </div>
+
+                  <div className="text-[10px] font-bold text-[#4B1F0F]/70 truncate p-2 bg-amber-50 rounded border border-[#4B1F0F]/20">
+                    Active: {content.trailer?.videoSrc?.split('/').pop() || 'No video configured'}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openMediaLibrary((url) => {
+                        updateContentWithHistory({
+                          trailer: { ...content.trailer, videoSrc: url },
+                        });
+                      });
+                    }}
+                    className="flex items-center justify-center gap-2 w-full py-2 bg-[#FFC72C] hover:bg-[#ffbf11] text-[#4B1F0F] font-heading text-xs font-black uppercase tracking-wider rounded-lg border-2 border-[#4B1F0F] shadow-[2px_2px_0px_#4B1F0F] active:translate-x-[1px] active:translate-y-[1px] transition-all cursor-pointer"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Choose / Upload Video (WP Media Library)</span>
+                  </button>
+
+                  <input
+                    type="text"
+                    placeholder="Direct Video URL (.mp4)"
+                    value={content.trailer?.videoSrc || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        trailer: { ...content.trailer, videoSrc: e.target.value },
+                      })
+                    }
+                    className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const defaults = getDefaultContentSchema();
+                      updateContentWithHistory({
+                        trailer: { ...content.trailer, videoSrc: defaults.trailer.videoSrc },
+                      });
+                    }}
+                    className="text-[10px] text-red-600 font-bold hover:underline flex items-center gap-1 cursor-pointer pt-1"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                    <span>Reset to Default Trailer Video</span>
+                  </button>
+                </div>
+
+                {/* Mobile Video Source (Optional 9:16 MP4) */}
+                <div className="p-3 bg-white rounded-xl border-2 border-[#4B1F0F] space-y-2">
+                  <div className="flex items-center gap-1.5">
+                    <VideoIcon className="w-4 h-4 text-[#4B1F0F]" />
+                    <label className="block text-xs font-black uppercase tracking-wider">
+                      Mobile Video (Optional 9:16 MP4)
+                    </label>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openMediaLibrary((url) => {
+                        updateContentWithHistory({
+                          trailer: { ...content.trailer, videoSrcMobile: url },
+                        });
+                      });
+                    }}
+                    className="flex items-center justify-center gap-2 w-full py-1.5 bg-amber-100 hover:bg-amber-200 text-[#4B1F0F] font-heading text-[11px] font-black uppercase tracking-wider rounded-lg border border-[#4B1F0F] transition-all cursor-pointer"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Choose Mobile Video (WP Media)</span>
+                  </button>
+
+                  <input
+                    type="text"
+                    placeholder="Mobile Video URL (.mp4)"
+                    value={content.trailer?.videoSrcMobile || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        trailer: { ...content.trailer, videoSrcMobile: e.target.value },
+                      })
+                    }
+                    className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"
+                  />
+                </div>
+
+                {/* Poster Image */}
+                <div className="p-3 bg-white rounded-xl border-2 border-[#4B1F0F] space-y-2">
+                  <label className="block text-xs font-black uppercase tracking-wider">
+                    Video Poster Image (Optional)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openMediaLibrary((url) => {
+                        updateContentWithHistory({
+                          trailer: { ...content.trailer, posterSrc: url },
+                        });
+                      });
+                    }}
+                    className="flex items-center justify-center gap-2 w-full py-1.5 bg-amber-100 hover:bg-amber-200 text-[#4B1F0F] font-heading text-[11px] font-black uppercase tracking-wider rounded-lg border border-[#4B1F0F] transition-all cursor-pointer"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Choose Poster Image (WP Media)</span>
+                  </button>
+                  <input
+                    type="text"
+                    placeholder="Poster Image URL"
+                    value={content.trailer?.posterSrc || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        trailer: { ...content.trailer, posterSrc: e.target.value },
+                      })
+                    }
+                    className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SECTION: FLAVOURVERSE                                    */}
+            {/* ======================================================== */}
+            {selectedSectionId === 'flavourverse' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Eyebrow
+                  </label>
+                  <input
+                    type="text"
+                    value={content.flavourverse?.eyebrow || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        flavourverse: { ...content.flavourverse, eyebrow: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    value={content.flavourverse?.title || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        flavourverse: { ...content.flavourverse, title: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Subtitle
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={content.flavourverse?.subtitle || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        flavourverse: { ...content.flavourverse, subtitle: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                {/* Product Cards Selector Tabs */}
+                <div className="pt-2 border-t-2 border-[#4B1F0F]/15">
+                  <label className="block text-xs font-black uppercase tracking-wider mb-2">
+                    Edit Signature Flavour Cards (1–5)
+                  </label>
+                  <div className="grid grid-cols-5 gap-1 mb-3">
+                    {(content.flavourverse?.cards || []).map((card, idx) => (
+                      <button
+                        key={card.id || idx}
+                        type="button"
+                        onClick={() => setActiveFlavourIdx(idx)}
+                        className={`py-1.5 text-[10px] font-black uppercase rounded-lg border-2 transition-all cursor-pointer ${
+                          activeFlavourIdx === idx
+                            ? 'bg-[#4B1F0F] text-[#FFC72C] border-[#4B1F0F] shadow-sm'
+                            : 'bg-white text-[#4B1F0F] border-[#4B1F0F]/30 hover:bg-amber-100'
+                        }`}
+                      >
+                        #{card.flavourNumber || idx + 1}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Active Flavour Form */}
+                  {content.flavourverse?.cards?.[activeFlavourIdx] && (
+                    <div className="p-3 bg-white rounded-xl border-2 border-[#4B1F0F] space-y-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#4B1F0F]/80 uppercase mb-0.5">
+                          Card Title
+                        </label>
+                        <input
+                          type="text"
+                          value={content.flavourverse.cards[activeFlavourIdx].title}
+                          onChange={(e) => {
+                            const copy = [...content.flavourverse.cards];
+                            copy[activeFlavourIdx] = {
+                              ...copy[activeFlavourIdx],
+                              title: e.target.value,
+                            };
+                            updateContentWithHistory({
+                              flavourverse: { ...content.flavourverse, cards: copy },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-bold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#4B1F0F]/80 uppercase mb-0.5">
+                          Flavour Tagline
+                        </label>
+                        <input
+                          type="text"
+                          value={content.flavourverse.cards[activeFlavourIdx].label}
+                          onChange={(e) => {
+                            const copy = [...content.flavourverse.cards];
+                            copy[activeFlavourIdx] = {
+                              ...copy[activeFlavourIdx],
+                              label: e.target.value,
+                            };
+                            updateContentWithHistory({
+                              flavourverse: { ...content.flavourverse, cards: copy },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#4B1F0F]/80 uppercase mb-0.5">
+                          Description
+                        </label>
+                        <textarea
+                          rows={2}
+                          value={content.flavourverse.cards[activeFlavourIdx].description}
+                          onChange={(e) => {
+                            const copy = [...content.flavourverse.cards];
+                            copy[activeFlavourIdx] = {
+                              ...copy[activeFlavourIdx],
+                              description: e.target.value,
+                            };
+                            updateContentWithHistory({
+                              flavourverse: { ...content.flavourverse, cards: copy },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"
+                        />
+                      </div>
+
+                      {/* Package Image Uploader */}
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#4B1F0F]/80 uppercase mb-1">
+                          Package Image
+                        </label>
+                        <div className="flex items-center gap-3 p-2 bg-amber-50 rounded-lg border border-[#4B1F0F]/20 mb-2">
+                          <img
+                            src={content.flavourverse.cards[activeFlavourIdx].packageImage}
+                            alt="Package Preview"
+                            className="w-12 h-12 object-contain bg-white rounded border border-[#4B1F0F]/20 shrink-0"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <span className="text-[10px] font-bold text-[#4B1F0F]/70 block truncate">
+                              {content.flavourverse.cards[activeFlavourIdx].packageImage.split('/').pop()}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const defaults = getDefaultContentSchema();
+                                const defCard = defaults.flavourverse.cards[activeFlavourIdx];
+                                if (defCard) {
+                                  const copy = [...content.flavourverse.cards];
+                                  copy[activeFlavourIdx] = {
+                                    ...copy[activeFlavourIdx],
+                                    packageImage: defCard.packageImage,
+                                  };
+                                  updateContentWithHistory({
+                                    flavourverse: { ...content.flavourverse, cards: copy },
+                                  });
+                                }
+                              }}
+                              className="text-[10px] text-red-600 font-bold hover:underline flex items-center gap-1 mt-1 cursor-pointer"
+                            >
+                              <RotateCcw className="w-3 h-3" />
+                              <span>Reset to Default Image</span>
+                            </button>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            openMediaLibrary((url) => {
+                              const copy = [...content.flavourverse.cards];
+                              copy[activeFlavourIdx] = {
+                                ...copy[activeFlavourIdx],
+                                packageImage: url,
+                              };
+                              updateContentWithHistory({
+                                flavourverse: { ...content.flavourverse, cards: copy },
+                              });
+                            });
+                          }}
+                          className="flex items-center justify-center gap-2 w-full py-2 bg-[#FFC72C] hover:bg-[#ffbf11] text-[#4B1F0F] font-heading text-xs font-black uppercase tracking-wider rounded-lg border-2 border-[#4B1F0F] shadow-[2px_2px_0px_#4B1F0F] active:translate-x-[1px] active:translate-y-[1px] transition-all cursor-pointer mb-2"
+                        >
+                          <Upload className="w-4 h-4" />
+                          <span>Choose / Upload Package Image (WP Media)</span>
+                        </button>
+
+                        <input
+                          type="text"
+                          placeholder="Image URL"
+                          value={content.flavourverse.cards[activeFlavourIdx].packageImage}
+                          onChange={(e) => {
+                            const copy = [...content.flavourverse.cards];
+                            copy[activeFlavourIdx] = {
+                              ...copy[activeFlavourIdx],
+                              packageImage: e.target.value,
+                            };
+                            updateContentWithHistory({
+                              flavourverse: { ...content.flavourverse, cards: copy },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SECTION: ORIGIN STORY                                    */}
+            {/* ======================================================== */}
+            {selectedSectionId === 'origin-story' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Intro Eyebrow
+                  </label>
+                  <input
+                    type="text"
+                    value={content.originStory?.intro?.eyebrow || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        originStory: {
+                          ...content.originStory,
+                          intro: { ...content.originStory.intro, eyebrow: e.target.value },
+                        },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Intro Heading
+                  </label>
+                  <input
+                    type="text"
+                    value={content.originStory?.intro?.heading || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        originStory: {
+                          ...content.originStory,
+                          intro: { ...content.originStory.intro, heading: e.target.value },
+                        },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Intro Description
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={content.originStory?.intro?.description || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        originStory: {
+                          ...content.originStory,
+                          intro: { ...content.originStory.intro, description: e.target.value },
+                        },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                {/* Comic Scenes Selector Tabs */}
+                <div className="pt-2 border-t-2 border-[#4B1F0F]/15">
+                  <label className="block text-xs font-black uppercase tracking-wider mb-2">
+                    Edit Comic Scene (1–5)
+                  </label>
+                  <div className="grid grid-cols-5 gap-1 mb-3">
+                    {(content.originStory?.scenes || []).map((scene, idx) => (
+                      <button
+                        key={scene.sceneNumber || idx}
+                        type="button"
+                        onClick={() => setActiveSceneIdx(idx)}
+                        className={`py-1.5 text-[10px] font-black uppercase rounded-lg border-2 transition-all cursor-pointer ${
+                          activeSceneIdx === idx
+                            ? 'bg-[#4B1F0F] text-[#FFC72C] border-[#4B1F0F] shadow-sm'
+                            : 'bg-white text-[#4B1F0F] border-[#4B1F0F]/30 hover:bg-amber-100'
+                        }`}
+                      >
+                        Scene {scene.chapterCode || idx + 1}
+                      </button>
+                    ))}
+                  </div>
+
+                  {content.originStory?.scenes?.[activeSceneIdx] && (
+                    <div className="p-3 bg-white rounded-xl border-2 border-[#4B1F0F] space-y-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#4B1F0F]/80 uppercase mb-0.5">
+                          Scene Title
+                        </label>
+                        <input
+                          type="text"
+                          value={content.originStory.scenes[activeSceneIdx].title}
+                          onChange={(e) => {
+                            const copy = [...content.originStory.scenes];
+                            copy[activeSceneIdx] = {
+                              ...copy[activeSceneIdx],
+                              title: e.target.value,
+                            };
+                            updateContentWithHistory({
+                              originStory: { ...content.originStory, scenes: copy },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-bold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#4B1F0F]/80 uppercase mb-0.5">
+                          Identity Label / Audio Cue
+                        </label>
+                        <input
+                          type="text"
+                          value={content.originStory.scenes[activeSceneIdx].identityLabel}
+                          onChange={(e) => {
+                            const copy = [...content.originStory.scenes];
+                            copy[activeSceneIdx] = {
+                              ...copy[activeSceneIdx],
+                              identityLabel: e.target.value,
+                            };
+                            updateContentWithHistory({
+                              originStory: { ...content.originStory, scenes: copy },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-black uppercase tracking-wider text-[#E0351B]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#4B1F0F]/80 uppercase mb-0.5">
+                          Narrative Description
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={content.originStory.scenes[activeSceneIdx].description}
+                          onChange={(e) => {
+                            const copy = [...content.originStory.scenes];
+                            copy[activeSceneIdx] = {
+                              ...copy[activeSceneIdx],
+                              description: e.target.value,
+                            };
+                            updateContentWithHistory({
+                              originStory: { ...content.originStory, scenes: copy },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SECTION: HOW TO ORDER                                    */}
+            {/* ======================================================== */}
+            {selectedSectionId === 'how-to-order' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Section Eyebrow
+                  </label>
+                  <input
+                    type="text"
+                    value={content.howToOrder?.eyebrow || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        howToOrder: { ...content.howToOrder, eyebrow: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Section Title
+                  </label>
+                  <input
+                    type="text"
+                    value={content.howToOrder?.title || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        howToOrder: { ...content.howToOrder, title: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Subtitle
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={content.howToOrder?.subtitle || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        howToOrder: { ...content.howToOrder, subtitle: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                {/* Looping How-To Video */}
+                <div className="p-3 bg-white rounded-xl border-2 border-[#4B1F0F] space-y-2">
+                  <div className="flex items-center gap-1.5">
+                    <VideoIcon className="w-4 h-4 text-[#4B1F0F]" />
+                    <label className="block text-xs font-black uppercase tracking-wider">
+                      Looping Demo Video (Desktop MP4)
+                    </label>
+                  </div>
+
+                  <div className="text-[10px] font-bold text-[#4B1F0F]/70 truncate p-2 bg-amber-50 rounded border border-[#4B1F0F]/20">
+                    Active: {content.howToOrder?.videoSrc?.split('/').pop() || 'No video configured'}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openMediaLibrary((url) => {
+                        updateContentWithHistory({
+                          howToOrder: { ...content.howToOrder, videoSrc: url },
+                        });
+                      });
+                    }}
+                    className="flex items-center justify-center gap-2 w-full py-2 bg-[#FFC72C] hover:bg-[#ffbf11] text-[#4B1F0F] font-heading text-xs font-black uppercase tracking-wider rounded-lg border-2 border-[#4B1F0F] shadow-[2px_2px_0px_#4B1F0F] active:translate-x-[1px] active:translate-y-[1px] transition-all cursor-pointer"
+                  >
+                    <Upload className="w-4 h-4" />
+                    <span>Choose / Upload Video (WP Media Library)</span>
+                  </button>
+
+                  <input
+                    type="text"
+                    placeholder="Direct Video URL (.mp4)"
+                    value={content.howToOrder?.videoSrc || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        howToOrder: { ...content.howToOrder, videoSrc: e.target.value },
+                      })
+                    }
+                    className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const defaults = getDefaultContentSchema();
+                      updateContentWithHistory({
+                        howToOrder: { ...content.howToOrder, videoSrc: defaults.howToOrder.videoSrc },
+                      });
+                    }}
+                    className="text-[10px] text-red-600 font-bold hover:underline flex items-center gap-1 cursor-pointer pt-1"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                    <span>Reset to Default Video</span>
+                  </button>
+                </div>
+
+                {/* Looping Mobile Video */}
+                <div className="p-3 bg-white rounded-xl border-2 border-[#4B1F0F] space-y-2">
+                  <div className="flex items-center gap-1.5">
+                    <VideoIcon className="w-4 h-4 text-[#4B1F0F]" />
+                    <label className="block text-xs font-black uppercase tracking-wider">
+                      Mobile Video (Optional 9:16 MP4)
+                    </label>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      openMediaLibrary((url) => {
+                        updateContentWithHistory({
+                          howToOrder: { ...content.howToOrder, videoSrcMobile: url },
+                        });
+                      });
+                    }}
+                    className="flex items-center justify-center gap-2 w-full py-1.5 bg-amber-100 hover:bg-amber-200 text-[#4B1F0F] font-heading text-[11px] font-black uppercase tracking-wider rounded-lg border border-[#4B1F0F] transition-all cursor-pointer"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>Choose Mobile Video (WP Media)</span>
+                  </button>
+
+                  <input
+                    type="text"
+                    placeholder="Mobile Video URL (.mp4)"
+                    value={content.howToOrder?.videoSrcMobile || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        howToOrder: { ...content.howToOrder, videoSrcMobile: e.target.value },
+                      })
+                    }
+                    className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    WhatsApp Order Message
+                  </label>
+                  <input
+                    type="text"
+                    value={content.howToOrder?.whatsappMessage || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        howToOrder: { ...content.howToOrder, whatsappMessage: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                {/* Step Selector Tabs */}
+                <div className="pt-2 border-t-2 border-[#4B1F0F]/15">
+                  <label className="block text-xs font-black uppercase tracking-wider mb-2">
+                    Edit Ordering Steps (1–3)
+                  </label>
+                  <div className="grid grid-cols-3 gap-1 mb-3">
+                    {(content.howToOrder?.steps || []).map((step, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setActiveStepIdx(idx)}
+                        className={`py-1.5 text-[10px] font-black uppercase rounded-lg border-2 transition-all cursor-pointer ${
+                          activeStepIdx === idx
+                            ? 'bg-[#4B1F0F] text-[#FFC72C] border-[#4B1F0F] shadow-sm'
+                            : 'bg-white text-[#4B1F0F] border-[#4B1F0F]/30 hover:bg-amber-100'
+                        }`}
+                      >
+                        Step {step.stepNumber || idx + 1}
+                      </button>
+                    ))}
+                  </div>
+
+                  {content.howToOrder?.steps?.[activeStepIdx] && (
+                    <div className="p-3 bg-white rounded-xl border-2 border-[#4B1F0F] space-y-3">
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#4B1F0F]/80 uppercase mb-0.5">
+                          Step Title
+                        </label>
+                        <input
+                          type="text"
+                          value={content.howToOrder.steps[activeStepIdx].title}
+                          onChange={(e) => {
+                            const copy = [...content.howToOrder.steps];
+                            copy[activeStepIdx] = {
+                              ...copy[activeStepIdx],
+                              title: e.target.value,
+                            };
+                            updateContentWithHistory({
+                              howToOrder: { ...content.howToOrder, steps: copy },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-bold"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-[#4B1F0F]/80 uppercase mb-0.5">
+                          Step Description
+                        </label>
+                        <textarea
+                          rows={2}
+                          value={content.howToOrder.steps[activeStepIdx].description}
+                          onChange={(e) => {
+                            const copy = [...content.howToOrder.steps];
+                            copy[activeStepIdx] = {
+                              ...copy[activeStepIdx],
+                              description: e.target.value,
+                            };
+                            updateContentWithHistory({
+                              howToOrder: { ...content.howToOrder, steps: copy },
+                            });
+                          }}
+                          className="w-full px-2.5 py-1.5 bg-amber-50 rounded border border-[#4B1F0F]/20 text-xs font-medium"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SECTION: ABOUT                                           */}
+            {/* ======================================================== */}
+            {selectedSectionId === 'about' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Eyebrow
+                  </label>
+                  <input
+                    type="text"
+                    value={content.about?.eyebrow || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        about: { ...content.about, eyebrow: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Heading
+                  </label>
+                  <input
+                    type="text"
+                    value={content.about?.heading || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        about: { ...content.about, heading: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Paragraph 1
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={content.about?.paragraphs?.[0] || ''}
+                    onChange={(e) => {
+                      const copy = [...(content.about?.paragraphs || [])];
+                      copy[0] = e.target.value;
+                      updateContentWithHistory({
+                        about: { ...content.about, paragraphs: copy },
+                      });
+                    }}
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Paragraph 2
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={content.about?.paragraphs?.[1] || ''}
+                    onChange={(e) => {
+                      const copy = [...(content.about?.paragraphs || [])];
+                      copy[1] = e.target.value;
+                      updateContentWithHistory({
+                        about: { ...content.about, paragraphs: copy },
+                      });
+                    }}
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SECTION: CONTACT                                         */}
+            {/* ======================================================== */}
+            {selectedSectionId === 'contact' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={content.contact?.headline || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        contact: { ...content.contact, headline: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Subtitle
+                  </label>
+                  <input
+                    type="text"
+                    value={content.contact?.subtitle || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        contact: { ...content.contact, subtitle: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Display Phone Number
+                  </label>
+                  <input
+                    type="text"
+                    value={content.contact?.phone || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        contact: { ...content.contact, phone: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={content.contact?.email || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        contact: { ...content.contact, email: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Location
+                  </label>
+                  <input
+                    type="text"
+                    value={content.contact?.location || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        contact: { ...content.contact, location: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Opening Hours
+                  </label>
+                  <input
+                    type="text"
+                    value={content.contact?.hours || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        contact: { ...content.contact, hours: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* ======================================================== */}
+            {/* SECTION: FOOTER                                          */}
+            {/* ======================================================== */}
+            {selectedSectionId === 'footer' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Statement
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer?.statement || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        footer: { ...content.footer, statement: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Headline
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer?.headline || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        footer: { ...content.footer, headline: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Copy
+                  </label>
+                  <textarea
+                    rows={3}
+                    value={content.footer?.copy || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        footer: { ...content.footer, copy: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-black uppercase tracking-wider mb-1">
+                    Copyright Line
+                  </label>
+                  <input
+                    type="text"
+                    value={content.footer?.copyrightText || ''}
+                    onChange={(e) =>
+                      updateContentWithHistory({
+                        footer: { ...content.footer, copyrightText: e.target.value },
+                      })
+                    }
+                    className="w-full px-3 py-2 bg-white rounded-lg border-2 border-[#4B1F0F] text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#FFC72C]"
                   />
                 </div>
               </div>
